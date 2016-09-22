@@ -9,6 +9,10 @@ module Primix
       end
 
       def tokenize!
+        filter_tokens(split_contents)
+      end
+
+      def split_contents
         chars = @content.split ""
         tokens = []
         current_token = ""
@@ -26,6 +30,10 @@ module Primix
                 current_token << char
             end
         end
+        tokens
+      end
+
+      def filter_tokens(tokens)
         brace_level = 0
         tokens.select do |token|
           case token
