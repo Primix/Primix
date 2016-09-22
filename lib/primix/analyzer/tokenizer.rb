@@ -26,7 +26,14 @@ module Primix
                 current_token << char
             end
         end
-        tokens
+        brace_level = 0
+        tokens.select do |token|
+          case token
+          when "{" then brace_level += 1
+          when "}" then brace_level -= 1
+          end
+          brace_level <= 1 && token != "}"
+        end + ["}"]
       end
     end
   end
