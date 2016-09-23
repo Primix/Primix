@@ -38,14 +38,15 @@ module Primix
       end
 
       def remove_deeper_brace_level
-        brace_level = 0
-        tokens.select do |token|
-          case token
-          when "{" then brace_level += 1
-          when "}" then brace_level -= 1
-          end
-          brace_level <= 1 && token != "}"
-        end + ["}"]
+        0.tap do |level|
+          tokens.select do |token|
+            case token
+            when "{" then level += 1
+            when "}" then level -= 1
+            end
+            level <= 1 && token != "}"
+          end + ["}"]
+        end
       end
 
       def join_bracket
