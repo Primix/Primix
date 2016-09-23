@@ -49,32 +49,31 @@ module Primix
       end
 
       def join_bracket
-        bracket_level = 0
-        brackets = []
-        bracket_start_index = 0
-        tokens.each_with_index do |token, index|
-          case token
-          when "[" then
-            bracket_level += 1
-            bracket_start_index = index if bracket_level <= 1
-          when "]" then
-            brackets << (bracket_start_index..index) if bracket_level <= 1
-            bracket_level -= 1
+        [0, 0].tap do |level, bracket_end_index|
+          tokens.enum_for(:each_with_index).reverse_each do |token, index|
+            case token
+            when "]" then
+              level += 1
+              bracket_end_index = index if level <= 1
+            when "[" then
+              if level <= 1
+                range = index..bracket_end_index
+                tokens[range] = tokens[range].join
+              end
+              level -= 1
+            end
           end
-        end
-        brackets.reverse.each do |bracket|
-            tokens[bracket] = tokens[bracket].join
         end
       end
 
       def compact_return_type_operator
-        tokens = tokens.each_with_index do |token, index|
-          next_token = tokens[index + 1]
-          case [token, next_token]
+        tokens.enum_for(:each_with_index).reverse_each do |token, index|
+          previous_token = tokens[index - 1]
+          case [previous_token, token]
           when ["-", ">"] then
-            tokens[index..index+1] = ["->", nil]
+            tokens[index-1..index] = "->"
           end
-        end.compact
+        end
       end
     end
   end
