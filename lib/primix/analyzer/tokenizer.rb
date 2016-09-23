@@ -19,10 +19,9 @@ module Primix
       end
 
       def split_contents
-        chars = @content.split ""
         current_token = ""
 
-        chars.each_with_index do |char, index|
+        @content.split("").each_with_index do |char, index|
           case char
           when "(", ")", "{", "}", "[", "]", ":", "=", "\"", "-", ">", "." then
             tokens << current_token if current_token != ""
@@ -39,7 +38,7 @@ module Primix
 
       def remove_deeper_brace_level
         0.tap do |level|
-          tokens.select do |token|
+          tokens.select! do |token|
             case token
             when "{" then level += 1
             when "}" then level -= 1
