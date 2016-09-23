@@ -16,6 +16,10 @@ module Primix
         filter_tokens
         join_bracket
         compact_return_type_operator
+
+        tokens.map! do |token|
+          Token.new token
+        end
       end
 
       def split_contents
