@@ -1,0 +1,11 @@
+module Primix
+  class Node
+    attr_reader :type
+    attr_accessor :children
+
+    def initialize(type, *children)
+      @type = type
+      @children = children
+    end
+  end
+end

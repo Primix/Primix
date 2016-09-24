@@ -42,7 +42,7 @@ module Primix
 
       def remove_deeper_brace_level
         0.tap do |level|
-          tokens.select! do |token|
+          @tokens = tokens.select do |token|
             case token
             when "{" then level += 1
             when "}" then level -= 1
