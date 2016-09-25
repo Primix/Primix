@@ -15,11 +15,21 @@ module Primix
         content.match(/\/\/@/)
         true
       }.each { |file|
-        content = File.read file
+        content = extract_content file
         tokenizer = create_tokenizer content
         parser = Parser.new(tokenizer.tokenize!)
         parser.parse!
       }
+    end
+
+    def extract_content(file)
+      content = File.read file
+
+      # remove comments from content
+      content.gsub!(/\/\*.*\*\//m, "")
+      content.gsub!(/\/\/.*/, "")
+
+      content
     end
 
     def create_tokenizer(file)
