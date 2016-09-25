@@ -1,8 +1,8 @@
 module Primix
   class Analyzer
     class Parser
-      require 'primix/analyzer/analyzer_model/token'
-      require 'primix/analyzer/analyzer_model/node'
+      require 'primix/analyzer/analyze_model/token'
+      require 'primix/analyzer/analyze_model/node'
 
       attr_accessor :tokens
       attr_accessor :current_index
@@ -26,7 +26,7 @@ module Primix
       def shift_token
         stack << tokens[@current_index]
         @current_index += 1
-        # p "shift: #{stack.map { |s| s.type }}"
+        p "shift: #{stack.map { |s| s.type }}"
       end
 
       def reduce_grammar
@@ -41,7 +41,7 @@ module Primix
           reduce_to_method_partial
 
           if has_reduced
-            # p "reduce: #{token_in_stack_types}"
+            p "reduce: #{token_in_stack_types}"
             reduce_grammar
           end
         end

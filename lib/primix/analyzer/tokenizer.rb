@@ -1,7 +1,7 @@
 module Primix
   class Analyzer
     class Tokenizer
-      require 'primix/analyzer/analyzer_model/token'
+      require 'primix/analyzer/analyze_model/token'
 
       attr_reader :content
 
