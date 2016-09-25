@@ -1,6 +1,7 @@
 module Primix
-  module Analyzer
+  class Analyzer
     class Tokenizer
+      require 'primix/analyzer/model/token'
 
       attr_reader :content
 
@@ -8,12 +9,12 @@ module Primix
 
       def initialize(content)
         @content = content
-        @tokens = []s
+        @tokens = []
       end
 
       def tokenize!
         split_contents
-        filter_tokens
+        remove_deeper_brace_level
         join_bracket
         compact_return_type_operator
 
@@ -53,21 +54,21 @@ module Primix
       end
 
       def join_bracket
-        [0, 0].tap do |level, bracket_end_index|
-          tokens.enum_for(:each_with_index).reverse_each do |token, index|
-            case token
-            when "]" then
-              level += 1
-              bracket_end_index = index if level <= 1
-            when "[" then
-              if level <= 1
-                range = index..bracket_end_index
-                tokens[range] = tokens[range].join
-              end
-              level -= 1
-            end
-          end
-        end
+        # [0, 0].tap do |level, bracket_end_index|
+        #   tokens.enum_for(:each_with_index).reverse_each do |token, index|
+        #     case token
+        #     when "]" then
+        #       level += 1
+        #       bracket_end_index = index if level <= 1
+        #     when "[" then
+        #       if level <= 1
+        #         range = index..bracket_end_index
+        #         tokens[range] = tokens[range].join
+        #       end
+        #       level -= 1
+        #     end
+        #   end
+        # end
       end
 
       def compact_return_type_operator

@@ -1,5 +1,5 @@
 require "primix/version"
 
 module Primix
-  # Your code goes here...
+  autoload :Analyzer, 'primix/analyzer'
 end
