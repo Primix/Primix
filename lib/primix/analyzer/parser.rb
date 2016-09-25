@@ -1,14 +1,15 @@
 module Primix
-  module Parser
+  class Parser
 
     attr_accessor :tokens
     attr_accessor :current_index
     attr_accessor :stack
+    attr_accessor :has_reduced
 
     def initialize(tokens)
       @tokens = tokens
-      @stack  = []
       @current_index = 0
+      @stack = []
     end
 
     def parse!
@@ -22,9 +23,11 @@ module Primix
     def shift_token
       stack << tokens[@current_index]
       @current_index += 1
+      # p "shift: #{stack.map { |s| s.type }}"
     end
 
     def reduce_grammar
+      @has_reduced = false
       @stack.size.tap do |before|
         reduce_to_type
         reduce_to_key_type
@@ -34,7 +37,8 @@ module Primix
         recude_to_method
         reduce_to_method_partial
 
-        if @stack.size != before
+        if has_reduced
+          # p "reduce: #{token_in_stack_types}"
           reduce_grammar
         end
       end
@@ -68,32 +72,27 @@ module Primix
     end
 
     def reduce_to_key_type
-      reduce([:token, :colon, :TYPE], :KEY_TYPE, [:reduce])
+      reduce([:token, :colon, :TYPE], :KEY_TYPE, :reduce, :question, :bang)
     end
 
     def reduce_to_type
-      reduce_with_look_back_and_ahead([:colon, :token], :TYPE, 1, [:question, :bang, :reduce])
-      reduce_with_look_back_and_ahead([:reduce, :token], :TYPE, 1, [:question, :bang, :reduce])
-      reduce([:token, :question],           :TYPE)
-      reduce([:token, :bang],               :TYPE)
-      reduce([:token, :reduce, :TYPE],      :TYPE)
-      reduce([:TYPE, :reduce, :TYPE],       :TYPE)
-      reduce([:left_paranthesis, :TYPE, :right_paranthesis],            :TYPE, [:question, :bang])
-      reduce([:left_paranthesis, :TYPE, :right_paranthesis, :question], :TYPE)
-      reduce([:left_paranthesis, :TYPE, :right_paranthesis, :bang],     :TYPE)
+      reduce([:token],           :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
+      reduce([:TYPE, :question], :TYPE)
+      reduce([:TYPE, :bang],     :TYPE)
+      reduce([:left_paranthesis, :TYPE,   :right_paranthesis], :TYPE)
+      reduce([:left_bracket,     :TYPE,   :right_bracket],     :TYPE)
+      reduce([:TYPE,             :reduce, :TYPE],              :TYPE)
+      reduce([:left_paranthesis, :TYPE,   :comma, :TYPE, :right_paranthesis], :TYPE)
     end
 
     def reduce(tokens, type, *lookahead)
-      reduce_with_look_back_and_ahead(tokens, type, 0, lookahead.flatten)
-    end
-
-    def reduce_with_look_back_and_ahead(tokens, type, lookback = 0, lookahead = [])
       return if lookahead.count > 0 && next_token && lookahead.include?(next_token.type)
+      return if has_reduced
       count = tokens.size
       case token_in_stack_types.last count
       when tokens
-        need_replaced = count-lookback
-        stack[-need_replaced..-1] = Node.new(type, stack.last(need_replaced))
+        stack[-count..-1] = Node.new(type, stack.last(count))
+        @has_reduced = true
       end
     end
 
