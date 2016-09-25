@@ -3,6 +3,7 @@ module Primix
     module AST
       require_relative 'ast/base'
       require_relative 'ast/type'
+      require_relative 'ast/method'
       require_relative 'ast/key_type'
       require_relative 'ast/key_types'
       require_relative 'ast/var_decl'

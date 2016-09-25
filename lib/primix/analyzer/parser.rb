@@ -40,9 +40,8 @@ module Primix
           reduce_to_key_type
           reduce_to_key_types
           reduce_to_var
-          # reduce_to_enum
-          # recude_to_method
-          # reduce_to_method_partial
+          reduce_to_enum
+          recude_to_method
 
           if has_reduced
             p "reduce: #{token_in_stack_types}"
@@ -52,15 +51,11 @@ module Primix
       end
 
       def recude_to_method
-        reduce([:METHOD_PARTIAL, :reduce, :TYPE], :METHOD)
-        reduce([:METHOD_PARTIAL],                 :METHOD, :reduce)
-        reduce([:modifier, :METHOD],              :METHOD)
-      end
-
-      def reduce_to_method_partial
-        reduce([:func, :identifier, :l_paren, :KEY_TYPES, :r_paren], :METHOD_PARTIAL)
-        reduce([:func, :identifier, :l_paren, :KEY_TYPE,  :r_paren], :METHOD_PARTIAL)
-        reduce([:func, :identifier, :l_paren, :r_paren],             :METHOD_PARTIAL)
+        reduce([:modifier, :METHOD],      Method, :reduce)
+        reduce([:METHOD, :reduce, :TYPE], Method)
+        reduce([:func, :identifier, :l_paren, :KEY_TYPES, :r_paren], Method)
+        reduce([:func, :identifier, :l_paren, :KEY_TYPE,  :r_paren], Method)
+        reduce([:func, :identifier, :l_paren, :r_paren],             Method)
       end
 
       def reduce_to_enum
