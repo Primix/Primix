@@ -60,8 +60,8 @@ module Primix
       end
 
       def reduce_to_enum
-        reduce([:enum, :identifier],    :ENUM, :colon)
-        reduce([:enum, :KEY_TYPE], :ENUM)
+        reduce([:enum, :identifier], :ENUM, :colon)
+        reduce([:enum, :KEY_TYPE],   :ENUM)
       end
 
       def reduce_to_var
@@ -79,12 +79,12 @@ module Primix
       end
 
       def reduce_to_type
-        reduce([:identifier],           :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
+        reduce([:identifier],      :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
         reduce([:TYPE, :question], :TYPE)
         reduce([:TYPE, :bang],     :TYPE)
-        reduce([:l_paren, :TYPE, :r_paren],       :TYPE)
+        reduce([:l_paren, :TYPE, :r_paren],     :TYPE)
         reduce([:l_square, :TYPE,   :r_square], :TYPE)
-        reduce([:TYPE,      :reduce, :TYPE],      :TYPE)
+        reduce([:TYPE,      :reduce, :TYPE],    :TYPE)
         reduce([:l_paren,   :TYPE,   :comma, :TYPE, :r_paren], :TYPE)
       end
 
