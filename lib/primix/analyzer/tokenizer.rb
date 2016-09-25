@@ -5,7 +5,7 @@ module Primix
 
       attr_reader :content
 
-      attr_accessor :tokens
+      attr_accessor :identifiers
 
       def initialize(content)
         @content = content
@@ -15,7 +15,7 @@ module Primix
       def tokenize!
         split_contents
         remove_deeper_brace_level
-        join_bracket
+        join_square
         compact_return_type_operator
 
         tokens.map! do |token|
@@ -53,7 +53,7 @@ module Primix
         end
       end
 
-      def join_bracket
+      def join_square
         # [0, 0].tap do |level, bracket_end_index|
         #   tokens.enum_for(:each_with_index).reverse_each do |token, index|
         #     case token

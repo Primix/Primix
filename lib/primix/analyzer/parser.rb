@@ -4,7 +4,7 @@ module Primix
       require 'primix/analyzer/analyze_model/token'
       require 'primix/analyzer/analyze_model/node'
 
-      attr_accessor :tokens
+      attr_accessor :identifiers
       attr_accessor :current_index
       attr_accessor :stack
       attr_accessor :has_reduced
@@ -54,13 +54,13 @@ module Primix
       end
 
       def reduce_to_method_partial
-        reduce([:func, :token, :left_paranthesis, :KEY_TYPES, :right_paranthesis], :METHOD_PARTIAL)
-        reduce([:func, :token, :left_paranthesis, :KEY_TYPE, :right_paranthesis],  :METHOD_PARTIAL)
-        reduce([:func, :token, :left_paranthesis, :right_paranthesis],             :METHOD_PARTIAL)
+        reduce([:func, :identifier, :l_paren, :KEY_TYPES, :r_paren], :METHOD_PARTIAL)
+        reduce([:func, :identifier, :l_paren, :KEY_TYPE,  :r_paren], :METHOD_PARTIAL)
+        reduce([:func, :identifier, :l_paren, :r_paren],             :METHOD_PARTIAL)
       end
 
       def reduce_to_enum
-        reduce([:enum, :token],    :ENUM, :colon)
+        reduce([:enum, :identifier],    :ENUM, :colon)
         reduce([:enum, :KEY_TYPE], :ENUM)
       end
 
@@ -75,17 +75,17 @@ module Primix
       end
 
       def reduce_to_key_type
-        reduce([:token, :colon, :TYPE], :KEY_TYPE, :reduce, :question, :bang)
+        reduce([:identifier, :colon, :TYPE], :KEY_TYPE, :reduce, :question, :bang)
       end
 
       def reduce_to_type
-        reduce([:token],           :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
+        reduce([:identifier],           :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
         reduce([:TYPE, :question], :TYPE)
         reduce([:TYPE, :bang],     :TYPE)
-        reduce([:left_paranthesis, :TYPE,   :right_paranthesis], :TYPE)
-        reduce([:left_bracket,     :TYPE,   :right_bracket],     :TYPE)
-        reduce([:TYPE,             :reduce, :TYPE],              :TYPE)
-        reduce([:left_paranthesis, :TYPE,   :comma, :TYPE, :right_paranthesis], :TYPE)
+        reduce([:l_paren, :TYPE, :r_paren],       :TYPE)
+        reduce([:l_square, :TYPE,   :r_square], :TYPE)
+        reduce([:TYPE,      :reduce, :TYPE],      :TYPE)
+        reduce([:l_paren,   :TYPE,   :comma, :TYPE, :r_paren], :TYPE)
       end
 
       def reduce(tokens, type, *lookahead)
