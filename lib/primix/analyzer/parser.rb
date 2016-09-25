@@ -38,7 +38,7 @@ module Primix
         @stack.size.tap do |before|
           reduce_to_type
           reduce_to_key_type
-          # reduce_to_key_types
+          reduce_to_key_types
           reduce_to_var
           # reduce_to_enum
           # recude_to_method
@@ -76,8 +76,8 @@ module Primix
       end
 
       def reduce_to_key_types
-        reduce([:KEY_TYPE, :comma, :KEY_TYPE],  :KEY_TYPES)
-        reduce([:KEY_TYPE, :comma, :KEY_TYPES], :KEY_TYPES)
+        reduce([:KEY_TYPE, :comma, :KEY_TYPE],  KeyTypes)
+        reduce([:KEY_TYPE, :comma, :KEY_TYPES], KeyTypes)
       end
 
       def reduce_to_key_type
