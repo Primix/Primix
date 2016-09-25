@@ -1,10 +1,10 @@
 module Primix
   class Analyzer
     class Tokenizer
-      require 'primix/analyzer/analyze_model/token'
+      require_relative 'analyze_model/token'
 
       attr_reader :content
-
+      attr_accessor :tokens
       attr_accessor :identifiers
 
       def initialize(content)
@@ -29,11 +29,11 @@ module Primix
         @content.split("").each_with_index do |char, index|
           case char
           when "(", ")", "{", "}", "[", "]", ":", "=", "\"", "-", ">", "." then
-            tokens << current_token if current_token != ""
-            tokens << char
+            @tokens << current_token if current_token != ""
+            @tokens << char
             current_token = ""
           when " ", "\n", "\t" then
-            tokens << current_token if current_token != ""
+            @tokens << current_token if current_token != ""
             current_token = ""
           else
             current_token << char

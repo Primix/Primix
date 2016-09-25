@@ -11,7 +11,8 @@ module Primix
       def type
         case lexeme
         when "struct" then :struct
-        when "let", "var" then :var
+        when "var" then :var
+        when "let" then :let
         when "func" then :func
         when "enum" then :enum
         when "->" then :reduce

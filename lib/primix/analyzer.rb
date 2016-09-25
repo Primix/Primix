@@ -14,7 +14,7 @@ module Primix
         content = File.read file
         content.match(/\/\/@/)
         true
-      }.each { |file|
+      }.map { |file|
         content = extract_content file
         tokenizer = create_tokenizer content
         parser = Parser.new(tokenizer.tokenize!)

@@ -1,12 +1,16 @@
 module Primix
   class Analyzer
     class Parser
-      require 'primix/analyzer/analyze_model/token'
-      require 'primix/analyzer/analyze_model/node'
+      require_relative 'analyze_model/token'
+      require_relative 'analyze_model/node'
+      require_relative 'ast'
+
+      include Analyzer::AST
 
       attr_accessor :identifiers
       attr_accessor :current_index
       attr_accessor :stack
+      attr_accessor :tokens
       attr_accessor :has_reduced
 
       def initialize(tokens)
@@ -34,11 +38,11 @@ module Primix
         @stack.size.tap do |before|
           reduce_to_type
           reduce_to_key_type
-          reduce_to_key_types
+          # reduce_to_key_types
           reduce_to_var
-          reduce_to_enum
-          recude_to_method
-          reduce_to_method_partial
+          # reduce_to_enum
+          # recude_to_method
+          # reduce_to_method_partial
 
           if has_reduced
             p "reduce: #{token_in_stack_types}"
@@ -65,8 +69,10 @@ module Primix
       end
 
       def reduce_to_var
-        reduce([:var, :KEY_TYPE], :VAR)
-        reduce([:modifier, :VAR], :VAR)
+        reduce([:var, :KEY_TYPE], VarDecl)
+        reduce([:let, :KEY_TYPE], LetDecl)
+        reduce([:modifier, :VAR_DECL], VarDecl)
+        reduce([:modifier, :LET_DECL], LetDecl)
       end
 
       def reduce_to_key_types
@@ -75,26 +81,26 @@ module Primix
       end
 
       def reduce_to_key_type
-        reduce([:identifier, :colon, :TYPE], :KEY_TYPE, :reduce, :question, :bang)
+        reduce([:identifier, :colon, :TYPE], KeyType, :reduce, :question, :bang)
       end
 
       def reduce_to_type
-        reduce([:identifier],      :TYPE) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
-        reduce([:TYPE, :question], :TYPE)
-        reduce([:TYPE, :bang],     :TYPE)
-        reduce([:l_paren, :TYPE, :r_paren],     :TYPE)
-        reduce([:l_square, :TYPE,   :r_square], :TYPE)
-        reduce([:TYPE,      :reduce, :TYPE],    :TYPE)
-        reduce([:l_paren,   :TYPE,   :comma, :TYPE, :r_paren], :TYPE)
+        reduce([:identifier],      Type) if token_in_stack_types.include?(:colon) || token_in_stack_types.include?(:reduce)
+        reduce([:TYPE, :question], OptionalType)
+        reduce([:TYPE, :bang],     NonNilOptionalType)
+        reduce([:l_paren,  :TYPE, :r_paren],  WrappedType)
+        reduce([:l_square, :TYPE, :r_square], ArrayType)
+        reduce([:TYPE,     :reduce, :TYPE],   FunctionType)
+        reduce([:l_square, :TYPE,   :colon, :TYPE, :r_square], HashType)
       end
 
-      def reduce(tokens, type, *lookahead)
+      def reduce(tokens, kls, *lookahead)
         return if lookahead.count > 0 && next_token && lookahead.include?(next_token.type)
         return if has_reduced
         count = tokens.size
         case token_in_stack_types.last count
         when tokens
-          stack[-count..-1] = Node.new(type, stack.last(count))
+          stack[-count..-1] = kls.new(stack.last(count))
           @has_reduced = true
         end
       end
