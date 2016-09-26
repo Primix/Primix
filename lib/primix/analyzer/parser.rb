@@ -59,8 +59,9 @@ module Primix
       end
 
       def reduce_to_enum
-        reduce([:enum, :identifier], :ENUM, :colon)
-        reduce([:enum, :KEY_TYPE],   :ENUM)
+        reduce([:enum, :identifier], Enum, :colon)
+        reduce([:enum, :KEY_TYPE],   Enum)
+        reduce([:modifier, :ENUM],   Enum)
       end
 
       def reduce_to_var
