@@ -11,8 +11,8 @@ module Primix
       def type
         case lexeme
         when "struct" then :struct
-        when "var" then :var
-        when "let" then :let
+        when "var", "let" then :var
+        # when "let" then :let
         when "func" then :func
         when "enum" then :enum
         when "->" then :reduce
@@ -27,7 +27,7 @@ module Primix
         when "," then :comma
         when "?" then :question
         when "!" then :bang
-        when "static", "class", "public", "private", "internal", "fileprivate", "open", "dynamic", "weak", "@objc" then :modifier
+        when "static", "class" then :modifier
         # when /\".*\"/ then :string_literal
         # when /^\d+$/ then :number_literal
         # when /^\d+\.\d+$/ then :float_literal

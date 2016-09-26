@@ -16,8 +16,11 @@ module Primix
       def tokenize!
         split_contents
         remove_deeper_brace_level
+        remove_modifiers
         compact_return_type_operator
         compact_array_and_hash_value
+
+        p tokens
 
         tokens.map! do |token|
           Token.new token
@@ -55,7 +58,13 @@ module Primix
           end
           @index += 1
         end
+      end
 
+      def remove_modifiers
+        @tokens.select! do |token|
+          !(["lazy", "public", "private", "internal", "fileprivate",
+             "open", "dynamic", "weak", "@objc", "@discardableResult"].include? token)
+        end
       end
 
       def remove_deeper_brace_level
