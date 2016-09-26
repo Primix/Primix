@@ -11,10 +11,6 @@ module Primix
           super(:TYPE)
           @identifier = children.first
         end
-
-        def description
-          "#{self.class} #{identifier}"
-        end
       end
 
       class OptionalType < Base
@@ -23,10 +19,6 @@ module Primix
         def initialize(children)
           super(:TYPE)
           @identifier = children.first
-        end
-
-        def description
-          "#{self.class} #{identifier}"
         end
       end
 
@@ -37,10 +29,6 @@ module Primix
           super(:TYPE)
           @identifier = children.first
         end
-
-        def description
-          "#{self.class} #{identifier}"
-        end
       end
 
       class WrappedType < Base
@@ -50,10 +38,6 @@ module Primix
           super(:TYPE)
           @identifier = children[1]
         end
-
-        def description
-          "#{self.class} #{identifier}"
-        end
       end
 
       class ArrayType < Base
@@ -62,10 +46,6 @@ module Primix
         def initialize(children)
           super(:TYPE)
           @element_type = children[1]
-        end
-
-        def description
-          "#{self.class} #{element_type}"
         end
       end
 
@@ -78,10 +58,6 @@ module Primix
           @key_type   = children[1]
           @value_type = children[3]
         end
-
-        def description
-          "#{self.class} #{key_type}: #{value_type}"
-        end
       end
 
       class FunctionType < Base
@@ -92,10 +68,6 @@ module Primix
           super(:TYPE)
           @param_type  = children[0]
           @return_type = children[2]
-        end
-
-        def description
-          "#{self.class} #{param_type} -> #{return_type}"
         end
       end
     end

@@ -91,6 +91,10 @@ module Primix
         reduce([:l_square, :TYPE,   :colon, :TYPE, :r_square], HashType)
       end
 
+      def reduce_to_value
+        #code
+      end
+
       def reduce(tokens, kls, *lookahead)
         return if lookahead.count > 0 && next_token && lookahead.include?(next_token.type)
         return if has_reduced

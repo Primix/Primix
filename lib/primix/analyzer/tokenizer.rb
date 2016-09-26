@@ -32,14 +32,14 @@ module Primix
           case char
           when "\"" || in_string then
             current_token << char
-            if is_literal_quote = char == "\"" && previous_char != "\\"
+            if char == "\"" && previous_char != "\\"
               in_string = !in_string
               if in_string == false
                 @tokens << current_token
                 current_token = ""
               end
             end
-          when "(", ")", "{", "}", "[", "]", ":", "=", "-", ">", ".", " ", "\n", "\t" then
+          when "(", ")", "{", "}", "[", "]", ":", "=", "-", ">", " ", "\n", "\t" then
             if in_string
               current_token << char
             else
