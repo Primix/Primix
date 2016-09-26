@@ -28,10 +28,10 @@ module Primix
         when "?" then :question
         when "!" then :bang
         when "static", "class", "public", "private", "internal", "fileprivate", "open", "dynamic", "weak", "@objc" then :modifier
-        when /\".*\"/ then :string_literal
-        when /^\d+$/ then :number_literal
-        when /^\d+\.\d+$/ then :float_literal
-        when /^(true|false)$/ then :bool_literal
+        # when /\".*\"/ then :string_literal
+        # when /^\d+$/ then :number_literal
+        # when /^\d+\.\d+$/ then :float_literal
+        # when /^(true|false)$/ then :bool_literal
         else :identifier
         end
       end

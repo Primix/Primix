@@ -7,10 +7,8 @@ module Primix
         attr_reader :value
 
         def initialize(children)
-          super(:KEY_TYPES)
-          @key_types = [children.first]
-          @key_types << children.last
-          @key_types.flatten!
+          super(:VALUE)
+          @value = children.first
         end
       end
     end

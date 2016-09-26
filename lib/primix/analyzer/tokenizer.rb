@@ -17,6 +17,7 @@ module Primix
         split_contents
         remove_deeper_brace_level
         compact_return_type_operator
+        compact_array_and_hash_value
 
         tokens.map! do |token|
           Token.new token
@@ -75,6 +76,24 @@ module Primix
           case [previous_token, token]
           when ["-", ">"] then
             tokens[index-1..index] = "->"
+          end
+        end
+      end
+
+      def compact_array_and_hash_value
+        [0, 0].tap do |level, bracket_end_index|
+          tokens.enum_for(:each_with_index).reverse_each do |token, index|
+            case token
+            when "]" then
+              level += 1
+              bracket_end_index = index if level <= 1
+            when "[" then
+              if level <= 1 && tokens[index-1] == "="
+                range = index..bracket_end_index
+                tokens[range] = tokens[range].join
+              end
+              level -= 1
+            end
           end
         end
       end

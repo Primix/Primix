@@ -36,12 +36,14 @@ module Primix
       def reduce_grammar
         @has_reduced = false
         @stack.size.tap do |before|
-          reduce_to_type
-          reduce_to_key_type
-          reduce_to_key_types
           reduce_to_var
           reduce_to_enum
+          reduce_to_type
+          reduce_to_value
           recude_to_method
+          reduce_to_key_type
+          reduce_to_outer_key_type
+          reduce_to_outer_key_types
 
           if has_reduced
             p "reduce: #{token_in_stack_types}"
@@ -53,8 +55,8 @@ module Primix
       def recude_to_method
         reduce([:modifier, :METHOD],      Method, :reduce)
         reduce([:METHOD, :reduce, :TYPE], Method)
-        reduce([:func, :identifier, :l_paren, :KEY_TYPES, :r_paren], Method)
-        reduce([:func, :identifier, :l_paren, :KEY_TYPE,  :r_paren], Method)
+        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPES, :r_paren], Method)
+        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPE,  :r_paren], Method)
         reduce([:func, :identifier, :l_paren, :r_paren],             Method)
       end
 
@@ -65,20 +67,26 @@ module Primix
       end
 
       def reduce_to_var
-        reduce([:var, :KEY_TYPE], VarDecl)
+        reduce([:var, :KEY_TYPE], VarDecl, :equal)
         reduce([:modifier, :LET_DECL], LetDecl)
 
-        reduce([:let, :KEY_TYPE], LetDecl)
+        reduce([:let, :KEY_TYPE], LetDecl, :equal)
         reduce([:modifier, :VAR_DECL], VarDecl)
       end
 
-      def reduce_to_key_types
-        reduce([:KEY_TYPE, :comma, :KEY_TYPE],  KeyTypes)
-        reduce([:KEY_TYPE, :comma, :KEY_TYPES], KeyTypes)
+      def reduce_to_outer_key_type
+        reduce([:identifier, :KEY_TYPE], OuterKeyType)
+        reduce([:KEY_TYPE], OuterKeyType) if token_in_stack_types.include?(:l_paran)
+      end
+
+      def reduce_to_outer_key_types
+        reduce([:OUTER_KEY_TYPE, :comma, :OUTER_KEY_TYPE],  OuterKeyTypes)
+        reduce([:OUTER_KEY_TYPE, :comma, :OUTER_KEY_TYPES], OuterKeyTypes)
       end
 
       def reduce_to_key_type
         reduce([:identifier, :colon, :TYPE], KeyType, :reduce, :question, :bang)
+        reduce([:KEY_TYPE, :equal, :VALUE],  KeyType)
       end
 
       def reduce_to_type
@@ -92,7 +100,7 @@ module Primix
       end
 
       def reduce_to_value
-        #code
+        reduce([:identifier], Value) if token_in_stack_types.include?(:equal)
       end
 
       def reduce(tokens, kls, *lookahead)

@@ -29,12 +29,12 @@ module Primix
             @identifier = children[1]
             @param_types = []
             @return_type = "Void"
-          elsif children[3].type == :KEY_TYPES
+          elsif children[3].type == :OUTER_KEY_TYPES
             @modifiers = []
             @identifier = children[1]
-            @param_types = children[3].key_types
+            @param_types = children[3].outer_key_types
             @return_type = "Void"
-          elsif children[3].type == :KEY_TYPE
+          elsif children[3].type == :OUTER_KEY_TYPE
             @modifiers = []
             @identifier = children[1]
             @param_types = [children[3]]
