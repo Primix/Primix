@@ -66,9 +66,10 @@ module Primix
 
       def reduce_to_var
         reduce([:var, :KEY_TYPE], VarDecl)
+        reduce([:modifier, :LET_DECL], LetDecl)
+
         reduce([:let, :KEY_TYPE], LetDecl)
         reduce([:modifier, :VAR_DECL], VarDecl)
-        reduce([:modifier, :LET_DECL], LetDecl)
       end
 
       def reduce_to_key_types
