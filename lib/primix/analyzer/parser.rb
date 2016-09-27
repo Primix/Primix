@@ -30,7 +30,7 @@ module Primix
       def shift_token
         stack << tokens[@current_index]
         @current_index += 1
-        p "shift: #{stack.map { |s| s.type }}"
+        p "shift: #{stack.map(&:type)}"
       end
 
       def reduce_grammar
@@ -57,7 +57,7 @@ module Primix
         reduce([:METHOD, :reduce, :TYPE], Method)
         reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPES, :r_paren], Method)
         reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPE,  :r_paren], Method)
-        reduce([:func, :identifier, :l_paren, :r_paren],             Method)
+        reduce([:func, :identifier, :l_paren, :r_paren],                   Method)
       end
 
       def reduce_to_enum
@@ -67,10 +67,10 @@ module Primix
       end
 
       def reduce_to_var
-        reduce([:var, :KEY_TYPE], VarDecl, :equal)
+        reduce([:var, :KEY_TYPE],      VarDecl, :equal)
         reduce([:modifier, :LET_DECL], LetDecl)
 
-        reduce([:let, :KEY_TYPE], LetDecl, :equal)
+        reduce([:let, :KEY_TYPE],      LetDecl, :equal)
         reduce([:modifier, :VAR_DECL], VarDecl)
       end
 
@@ -115,7 +115,7 @@ module Primix
       end
 
       def token_in_stack_types
-        @stack.map { |t| t.type }
+        @stack.map(&:type)
       end
 
       def next_token

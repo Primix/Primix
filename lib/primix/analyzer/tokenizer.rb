@@ -1,6 +1,7 @@
 module Primix
   class Analyzer
     class Tokenizer
+      require 'primix/helper'
       require_relative 'analyze_model/token'
 
       attr_reader :content
@@ -17,10 +18,9 @@ module Primix
         split_contents
         remove_deeper_brace_level
         remove_modifiers
+        remove_unresolving_statement
         compact_return_type_operator
         compact_array_and_hash_value
-
-        p tokens
 
         tokens.map! do |token|
           Token.new token
@@ -51,7 +51,7 @@ module Primix
                 @tokens << current_token if current_token != ""
                 current_token = ""
               end
-              @tokens << char unless [" ", "\n", "\t"].include? char
+              @tokens << char unless [" ", "\t"].include? char
             end
           else
             current_token << char
@@ -65,6 +65,15 @@ module Primix
           !(["lazy", "public", "private", "internal", "fileprivate",
              "open", "dynamic", "weak", "@objc", "@discardableResult"].include? token)
         end
+      end
+
+      def remove_unresolving_statement
+        @tokens = tokens
+          .compact("\n")
+          .reduce([[]]) { |memo, obj| if obj == "\n" then memo << [] else memo.last << obj end; memo }
+          .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func].any?(&stmt.method(:include?)) }
+          .flatten
+          .reject { |element| element == "\n" }
       end
 
       def remove_deeper_brace_level
