@@ -17,10 +17,12 @@ module Primix
       def tokenize!
         split_contents
         remove_deeper_brace_level
-        remove_modifiers
         remove_unresolving_statement
+        remove_modifiers
         compact_return_type_operator
         compact_array_and_hash_value
+
+        p tokens
 
         tokens.map! do |token|
           Token.new token
@@ -43,7 +45,7 @@ module Primix
                 current_token = ""
               end
             end
-          when "(", ")", "{", "}", "[", "]", ":", "=", "-", ">", " ", "\n", "\t" then
+          when "(", ")", "{", "}", "[", "]", ":", "=", "-", ">", " ", ",", "\n", "\t" then
             if in_string
               current_token << char
             else
@@ -63,7 +65,8 @@ module Primix
       def remove_modifiers
         @tokens.select! do |token|
           !(["lazy", "public", "private", "internal", "fileprivate",
-             "open", "dynamic", "weak", "@objc", "@discardableResult"].include? token)
+             "open", "dynamic", "weak", "@objc", "@discardableResult",
+             "required", "final", "convenience"].include? token)
         end
       end
 
@@ -71,7 +74,7 @@ module Primix
         @tokens = tokens
           .compact("\n")
           .reduce([[]]) { |memo, obj| if obj == "\n" then memo << [] else memo.last << obj end; memo }
-          .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func].any?(&stmt.method(:include?)) }
+          .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func init].any?(&stmt.method(:include?)) }
           .flatten
           .reject { |element| element == "\n" }
       end

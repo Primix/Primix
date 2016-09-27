@@ -37,11 +37,11 @@ module Primix
         @has_reduced = false
         @stack.size.tap do |before|
           reduce_to_var
-          reduce_to_enum
           reduce_to_type
           reduce_to_value
           recude_to_method
           reduce_to_key_type
+          reduce_to_constructor
           reduce_to_outer_key_type
           reduce_to_outer_key_types
 
@@ -52,18 +52,18 @@ module Primix
         end
       end
 
+      def reduce_to_constructor
+        reduce([:init, :l_paren, :OUTER_KEY_TYPES, :r_paren], Constructor)
+        reduce([:init, :l_paren, :OUTER_KEY_TYPE,  :r_paren], Constructor)
+        reduce([:init, :l_paren, :r_paren],                   Constructor)
+      end
+
       def recude_to_method
         reduce([:modifier, :METHOD],      Method, :reduce)
         reduce([:METHOD, :reduce, :TYPE], Method)
         reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPES, :r_paren], Method)
         reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPE,  :r_paren], Method)
         reduce([:func, :identifier, :l_paren, :r_paren],                   Method)
-      end
-
-      def reduce_to_enum
-        reduce([:enum, :identifier], Enum, :colon)
-        reduce([:enum, :KEY_TYPE],   Enum)
-        reduce([:modifier, :ENUM],   Enum)
       end
 
       def reduce_to_var
@@ -76,7 +76,7 @@ module Primix
 
       def reduce_to_outer_key_type
         reduce([:identifier, :KEY_TYPE], OuterKeyType)
-        reduce([:KEY_TYPE], OuterKeyType) if token_in_stack_types.include?(:l_paran)
+        reduce([:KEY_TYPE], OuterKeyType) if token_in_stack_types.include?(:l_paren)
       end
 
       def reduce_to_outer_key_types

@@ -9,6 +9,7 @@ module Primix
       require_relative 'ast/key_type'
       require_relative 'ast/var_decl'
       require_relative 'ast/let_decl'
+      require_relative 'ast/constructor'
       require_relative 'ast/outer_key_type'
     end
   end

@@ -15,6 +15,7 @@ module Primix
         # when "let" then :let
         when "func" then :func
         when "enum" then :enum
+        when "init" then :init
         when "->" then :reduce
         when "(" then :l_paren
         when ")" then :r_paren
