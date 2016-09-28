@@ -3,7 +3,7 @@ require_relative 'base'
 module Primix
   class Analyzer
     module AST
-      class Method < Base
+      class MethodDecl < Base
         attr_reader :modifiers
         attr_reader :identifier
         attr_reader :param_types

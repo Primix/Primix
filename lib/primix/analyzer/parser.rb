@@ -4,45 +4,60 @@ module Primix
       require_relative 'analyze_model/token'
       require_relative 'analyze_model/node'
       require_relative 'analyze_result/klass'
+      require_relative 'analyze_result/method'
       require_relative 'ast'
 
       include Analyzer::AST
 
       attr_accessor :stack
-      attr_accessor :tokens
+      attr_accessor :all_tokens
       attr_accessor :has_reduced
       attr_accessor :current_index
       attr_accessor :klass
 
       def initialize(tokens)
-        @tokens = extract_model_infomation(tokens).map { |token| Token.new token }
+        @all_tokens = extract_model_information(tokens).map { |token| Token.new token }
         @current_index = 0
         @stack = []
-        p @klass.name
       end
 
       def parse!
-        while current_index < tokens.size
+        while current_index < all_tokens.size
           shift_token
           reduce_grammar
         end
-        @stack
+        fulfill_model_information
+        @klass
       end
 
-      def extract_model_infomation(tokens)
+      def extract_model_information(tokens)
         struct_info_range = 0..(tokens.find_index("{") - 1)
         struct_info = tokens[struct_info_range]
         if index = struct_info.find_index("struct")
           @klass = AnalyzeResult::Klass.new struct_info[index+1]
-        elsif index = struct.find_index("class")
+        elsif index = struct_info.find_index("class")
           @klass = AnalyzeResult::Klass.new struct_info[index+1]
         end
         tokens[struct_info_range] = nil
-        tokens.compact!
+        tokens.compact.reject { |token| token == "{" || token == "}" }
+      end
+
+      def fulfill_model_information
+        @stack.each do |element|
+          case element.type
+          when :VAR_DECL then
+            klass.add_attribute(element)
+          when :METHOD then
+            klass.add_method(AnalyzeResult::Method.new(element))
+          when :CONSTRUCTOR then
+            klass.add_method(element)
+          else raise "Unresolved token error"
+          end
+        end
       end
 
       def shift_token
-        stack << tokens[@current_index]
+        stack << all_tokens[@current_index]
         @current_index += 1
         p "shift: #{stack.map(&:type)}"
       end
@@ -73,11 +88,11 @@ module Primix
       end
 
       def recude_to_method
-        reduce([:modifier, :METHOD],      Method, :reduce)
-        reduce([:METHOD, :reduce, :TYPE], Method)
-        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPES, :r_paren], Method)
-        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPE,  :r_paren], Method)
-        reduce([:func, :identifier, :l_paren, :r_paren],                   Method)
+        reduce([:modifier, :METHOD],      MethodDecl, :reduce)
+        reduce([:METHOD, :reduce, :TYPE], MethodDecl)
+        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPES, :r_paren], MethodDecl)
+        reduce([:func, :identifier, :l_paren, :OUTER_KEY_TYPE,  :r_paren], MethodDecl)
+        reduce([:func, :identifier, :l_paren, :r_paren],                   MethodDecl)
       end
 
       def reduce_to_var
@@ -133,7 +148,7 @@ module Primix
       end
 
       def next_token
-        tokens[@current_index]
+        all_tokens[@current_index]
       end
     end
   end

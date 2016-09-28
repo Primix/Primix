@@ -67,7 +67,7 @@ module Primix
 
       def remove_unresolving_statement
         @tokens = tokens
-          .compact("\n")
+          .compact_with_element("\n")
           .reduce([[]]) { |memo, obj| if obj == "\n" then memo << [] else memo.last << obj end; memo }
           .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func init struct class].any?(&stmt.method(:include?)) }
           .flatten

@@ -9,8 +9,8 @@ module Primix
         def initialize(children)
           super(:OUTER_KEY_TYPE)
           if children.count == 1
-            @label = ""
             @key_type = children.last
+            @label = key_type.identifier
           else
             label = children.first
             @label = label

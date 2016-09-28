@@ -1,5 +1,5 @@
 class Array
-  def compact(element)
+  def compact_with_element(element)
     [].tap do |result|
       self.each_with_index { |item, index|
         result << item unless item == element && item == self[index+1]

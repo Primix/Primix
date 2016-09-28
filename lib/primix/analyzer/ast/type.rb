@@ -11,6 +11,10 @@ module Primix
           super(:TYPE)
           @identifier = children.first
         end
+
+        def desc
+          "#{identifier.lexeme}"
+        end
       end
 
       class OptionalType < Base
@@ -19,6 +23,10 @@ module Primix
         def initialize(children)
           super(:TYPE)
           @identifier = children.first
+        end
+
+        def desc
+          "#{identifier.desc}?"
         end
       end
 
@@ -29,6 +37,10 @@ module Primix
           super(:TYPE)
           @identifier = children.first
         end
+
+        def desc
+          "#{identifier.desc}!"
+        end
       end
 
       class WrappedType < Base
@@ -38,6 +50,10 @@ module Primix
           super(:TYPE)
           @identifier = children[1]
         end
+
+        def desc
+          "(#{identifier.desc})"
+        end
       end
 
       class ArrayType < Base
@@ -46,6 +62,10 @@ module Primix
         def initialize(children)
           super(:TYPE)
           @element_type = children[1]
+        end
+
+        def desc
+          "[#{element_type.desc}]"
         end
       end
 
@@ -58,6 +78,10 @@ module Primix
           @key_type   = children[1]
           @value_type = children[3]
         end
+
+        def desc
+          "[#{key_type.desc}: #{value_type.desc}]"
+        end
       end
 
       class FunctionType < Base
@@ -68,6 +92,10 @@ module Primix
           super(:TYPE)
           @param_type  = children[0]
           @return_type = children[2]
+        end
+
+        def desc
+          "#{param_type.desc} -> #{return_type.desc}"
         end
       end
     end
