@@ -46,11 +46,11 @@ module Primix
         @stack.each do |element|
           case element.type
           when :VAR_DECL then
-            klass.add_attribute(element)
+            klass.append_attribute(element)
           when :METHOD then
-            klass.add_method(AnalyzeResult::Method.new(element))
+            klass.append_method(AnalyzeResult::Method.new(element))
           when :CONSTRUCTOR then
-            klass.add_method(element)
+            klass.append_method(element)
           else raise "Unresolved token error"
           end
         end

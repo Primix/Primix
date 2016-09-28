@@ -12,11 +12,11 @@ module Primix
           @attributes = []
         end
 
-        def add_method(method)
+        def append_method(method)
           @methods << method
         end
 
-        def add_attribute(attribute)
+        def append_attribute(attribute)
           @attributes << attribute
         end
 
