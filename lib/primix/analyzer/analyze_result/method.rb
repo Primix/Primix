@@ -1,7 +1,9 @@
 module Primix
-  class AnalyzeResult
-    class Method < Base
+  class Analyzer
+    class AnalyzeResult
+      class Method
 
+      end
     end
   end
 end

@@ -21,12 +21,7 @@ module Primix
         remove_modifiers
         compact_return_type_operator
         compact_array_and_hash_value
-
-        p tokens
-
-        tokens.map! do |token|
-          Token.new token
-        end
+        @tokens
       end
 
       def split_contents
@@ -74,7 +69,7 @@ module Primix
         @tokens = tokens
           .compact("\n")
           .reduce([[]]) { |memo, obj| if obj == "\n" then memo << [] else memo.last << obj end; memo }
-          .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func init].any?(&stmt.method(:include?)) }
+          .select { |stmt| [["{"], ["}"]].any?(&stmt.method(:==)) || %w[let var func init struct class].any?(&stmt.method(:include?)) }
           .flatten
           .reject { |element| element == "\n" }
       end

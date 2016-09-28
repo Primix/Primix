@@ -1,7 +1,9 @@
 module Primix
-  class AnalyzeResult
-    class Attribute < Base
+  class Analyzer
+    class AnalyzeResult
+      class Attribute
 
+      end
     end
   end
 end

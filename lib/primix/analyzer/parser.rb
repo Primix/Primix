@@ -3,20 +3,22 @@ module Primix
     class Parser
       require_relative 'analyze_model/token'
       require_relative 'analyze_model/node'
+      require_relative 'analyze_result/klass'
       require_relative 'ast'
 
       include Analyzer::AST
 
-      attr_accessor :identifiers
-      attr_accessor :current_index
       attr_accessor :stack
       attr_accessor :tokens
       attr_accessor :has_reduced
+      attr_accessor :current_index
+      attr_accessor :klass
 
       def initialize(tokens)
-        @tokens = tokens
+        @tokens = extract_model_infomation(tokens).map { |token| Token.new token }
         @current_index = 0
         @stack = []
+        p @klass.name
       end
 
       def parse!
@@ -25,6 +27,18 @@ module Primix
           reduce_grammar
         end
         @stack
+      end
+
+      def extract_model_infomation(tokens)
+        struct_info_range = 0..(tokens.find_index("{") - 1)
+        struct_info = tokens[struct_info_range]
+        if index = struct_info.find_index("struct")
+          @klass = AnalyzeResult::Klass.new struct_info[index+1]
+        elsif index = struct.find_index("class")
+          @klass = AnalyzeResult::Klass.new struct_info[index+1]
+        end
+        tokens[struct_info_range] = nil
+        tokens.compact!
       end
 
       def shift_token
