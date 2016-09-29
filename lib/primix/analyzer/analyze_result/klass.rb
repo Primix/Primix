@@ -19,7 +19,6 @@ module Primix
         def append_attribute(attribute)
           @attributes << attribute
         end
-
       end
     end
   end
