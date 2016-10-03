@@ -5,6 +5,7 @@ module Primix
       require_relative 'analyze_model/node'
       require_relative 'analyze_result/klass'
       require_relative 'analyze_result/method'
+      require_relative 'analyze_result/attribute'
       require_relative 'ast'
 
       include Analyzer::AST
@@ -27,7 +28,7 @@ module Primix
           reduce_grammar
         end
         fulfill_model_information
-        @klass
+        klass
       end
 
       def extract_model_information(tokens)
@@ -46,11 +47,11 @@ module Primix
         @stack.each do |element|
           case element.type
           when :VAR_DECL then
-            klass.append_attribute(element)
+            klass.append_attribute(AnalyzeResult::Attribute.new(element))
           when :METHOD then
-            klass.append_method(AnalyzeResult::Method.new(element))
+            klass.append_function(AnalyzeResult::Method.new(element))
           when :CONSTRUCTOR then
-            klass.append_method(element)
+            klass.append_function(element)
           else raise "Unresolved token error"
           end
         end

@@ -2,18 +2,18 @@ module Primix
   class Analyzer
     class AnalyzeResult
       class Klass
-        attr_reader :name
-        attr_accessor :methods
+        attr_reader   :name
+        attr_accessor :functions
         attr_accessor :attributes
 
         def initialize(name)
-          @name = name
-          @methods = []
+          @name       = name
+          @functions  = []
           @attributes = []
         end
 
-        def append_method(method)
-          @methods << method
+        def append_function(function)
+          @functions << function
         end
 
         def append_attribute(attribute)

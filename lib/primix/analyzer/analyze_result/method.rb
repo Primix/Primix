@@ -16,7 +16,7 @@ module Primix
         def initialize(element)
           if element.type == :METHOD
             @name = element.identifier.lexeme
-            @modifiers = element.modifiers
+            @modifiers = element.modifiers.map(&:lexeme)
             param_types = element.param_types
             @param_labels   = param_types.map(&:label).map(&:lexeme)
             @param_keys     = param_types.map(&:key_type).map(&:identifier).map(&:lexeme)
@@ -47,6 +47,31 @@ module Primix
             default = @default_values[index]
             "#{label} #{@param_keys[index]}: #{@param_types[index]}" + if default then " = #{default}" else "" end
           end.join(", ") + ")" +  " -> " + @return_type
+        end
+
+        def kindname
+          if is_class_method?
+            "function.class"
+          elsif is_static_method?
+            "function.static"
+          else
+            "function.instance"
+          end
+        end
+
+        def to_hash
+          hash = {}
+          hash[:kind] = kindname
+          hash[:name] = name
+          hash[:parameters] = []
+          @param_labels.each_with_index do |label, index|
+            kindname = "var.parameter"
+            default  = @default_values[index]
+            typename = @param_types[index]
+            name     = @param_keys[index]
+            hash[:parameters] << { :kindname => kindname, :defaultvalue => default, :name => name, :typename => typename }
+          end
+          hash
         end
       end
     end
