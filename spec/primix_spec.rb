@@ -1,6 +1,8 @@
 require 'spec_helper'
+require 'json'
 
 describe Primix::Analyzer, "#analyze!" do
   analyzer = Primix::Analyzer.new(".")
-  p analyzer.analyze!.first.attributes.first.to_hash
+  json = analyzer.analyze!.map(&:to_hash)
+  puts JSON.pretty_generate(json)
 end

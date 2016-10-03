@@ -63,13 +63,13 @@ module Primix
           hash = {}
           hash[:kind] = kindname
           hash[:name] = name
-          hash[:parameters] = []
+          hash[:substructure] = []
           @param_labels.each_with_index do |label, index|
             kindname = "var.parameter"
             default  = @default_values[index]
             typename = @param_types[index]
             name     = @param_keys[index]
-            hash[:parameters] << { :kindname => kindname, :defaultvalue => default, :name => name, :typename => typename }
+            hash[:substructure] << { :kindname => kindname, :defaultvalue => default, :name => name, :typename => typename }
           end
           hash
         end
