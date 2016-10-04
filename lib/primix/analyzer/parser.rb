@@ -60,7 +60,7 @@ module Primix
       def shift_token
         stack << all_tokens[@current_index]
         @current_index += 1
-        p "shift: #{stack.map(&:type)}"
+        # p "shift: #{stack.map(&:type)}"
       end
 
       def reduce_grammar
@@ -76,7 +76,7 @@ module Primix
           reduce_to_outer_key_types
 
           if has_reduced
-            p "reduce: #{token_in_stack_types}"
+            # p "reduce: #{token_in_stack_types}"
             reduce_grammar
           end
         end

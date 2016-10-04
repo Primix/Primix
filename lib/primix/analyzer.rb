@@ -10,26 +10,52 @@ module Primix
     end
 
     def analyze!
+      files_contain_annotation.map { |file|
+        annotation_content_hash = extract_content file
+        annotation_content_hash.each do |annotations, content|
+          tokenizer = create_tokenizer content
+          parser = Parser.new(tokenizer.tokenize!)
+          annotation_content_hash[annotations] = parser.parse!
+        end
+      }
+    end
+
+    def files_contain_annotation
       Dir.glob("#{project_folder}/**/*.swift").select { |file|
         content = File.read file
         content.match(/\/\/@/)
-        true
-      }.map { |file|
-        content = extract_content file
-        tokenizer = create_tokenizer content
-        parser = Parser.new(tokenizer.tokenize!)
-        parser.parse!
       }
     end
 
     def extract_content(file)
-      content = File.read file
+      file_content = File.read file
+      file_content = file_content.gsub(/\/\*.*\*\//m, "").gsub(/\/\/(?!@).*/, "")
 
-      # remove comments from content
-      content.gsub!(/\/\*.*\*\//m, "")
-      content.gsub!(/\/\/.*/, "")
+      annotation_content_hash = {}
+      level = 0
 
-      content
+      [[], []].tap do |annotations, content|
+        file_content.split("\n").each do |line|
+          if annotations.count != 0
+            if line.match(/\/\/@/)
+              annotations << line
+            else
+              content << line
+              purify_line = line.gsub(/".*"/, "")
+              level += purify_line.scan("{").count
+              level -= purify_line.scan("}").count
+              if level == 0
+                annotation_content_hash[annotations] = content.join("\n")
+                content = []
+                annotations = []
+              end
+            end
+          elsif line.match(/\/\/@/)
+            annotations << line
+          end
+        end
+      end
+      annotation_content_hash
     end
 
     def create_tokenizer(file)
