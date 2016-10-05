@@ -7,5 +7,5 @@ describe Primix::Analyzer, "#analyze!" do
   file_klass_hash.each do |key, value|
     file_klass_hash[key] = value.to_hash
   end
-  puts JSON.pretty_generate(file_klass_hash)
+  # puts JSON.pretty_generate(file_klass_hash)
 end

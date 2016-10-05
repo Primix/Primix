@@ -1,6 +1,6 @@
 require "primix/version"
-require 'primix/analyzer'
 
 module Primix
-  autoload :Analyzer, 'primix/analyzer'
+  autoload :Analyzer,    'primix/analyzer'
+  autoload :Transformer, 'primix/transformer'
 end
