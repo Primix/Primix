@@ -21,8 +21,8 @@ module Primix
             let_vecl = children.last
             @identifier = let_vecl.identifier
             @real_type = let_vecl.real_type
-            @default_value = key_type.default_value
-            @modifiers = let_vecl.modifiers + children.first
+            @default_value = let_vecl.default_value
+            @modifiers = let_vecl.modifiers << children.first
           end
         end
       end

@@ -1,5 +1,5 @@
 //@jsoncop
 //@model
 class Model {
-  var hello: Int
+  class var hello: Int
 }

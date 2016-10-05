@@ -21,8 +21,8 @@ module Primix
             var_decl = children.last
             @identifier = var_decl.identifier
             @real_type = var_decl.real_type
-            @default_value = key_type.default_value
-            @modifiers = var_decl.modifiers + children.first
+            @default_value = var_decl.default_value
+            @modifiers = var_decl.modifiers << children.first
           end
         end
       end
