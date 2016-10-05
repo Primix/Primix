@@ -60,7 +60,7 @@ module Primix
       elsif value.start_with?("primix_placeholder_string_index_")
         value
       else
-        # eval value
+        eval value
       end
     end
 
