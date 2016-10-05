@@ -35,9 +35,9 @@ module Primix
         struct_info_range = 0..(tokens.find_index("{") - 1)
         struct_info = tokens[struct_info_range]
         if index = struct_info.find_index("struct")
-          @klass = AnalyzeResult::Klass.new struct_info[index+1]
+          @klass = AnalyzeResult::Klass.new struct_info[index+1], "struct"
         elsif index = struct_info.find_index("class")
-          @klass = AnalyzeResult::Klass.new struct_info[index+1]
+          @klass = AnalyzeResult::Klass.new struct_info[index+1], "class"
         end
         tokens[struct_info_range] = nil
         tokens.compact.reject { |token| token == "{" || token == "}" }

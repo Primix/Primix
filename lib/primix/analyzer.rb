@@ -10,14 +10,18 @@ module Primix
     end
 
     def analyze!
-      files_contain_annotation.map { |file|
-        annotation_content_hash = extract_content file
-        annotation_content_hash.each do |annotations, content|
-          tokenizer = create_tokenizer content
-          parser = Parser.new(tokenizer.tokenize!)
-          annotation_content_hash[annotations] = parser.parse!
-        end
-      }
+      {}.tap do |file_klass_hash|
+        files_contain_annotation.map { |file|
+          annotation_content_hash = extract_content file
+          annotation_content_hash.each do |annotations, content|
+            tokenizer = create_tokenizer content
+            parser = Parser.new(tokenizer.tokenize!)
+            klass = parser.parse!
+            klass.append_annotations(annotations)
+            file_klass_hash[file] = klass
+          end
+        }
+      end
     end
 
     def files_contain_annotation
@@ -38,7 +42,7 @@ module Primix
         file_content.split("\n").each do |line|
           if annotations.count != 0
             if line.match(/\/\/@/)
-              annotations << line
+              annotations << line[2..-1]
             else
               content << line
               purify_line = line.gsub(/".*"/, "")
@@ -51,7 +55,7 @@ module Primix
               end
             end
           elsif line.match(/\/\/@/)
-            annotations << line
+            annotations << line[2..-1]
           end
         end
       end
