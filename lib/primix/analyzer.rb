@@ -27,7 +27,7 @@ module Primix
     def files_contain_annotation
       Dir.glob("#{project_folder}/**/*.swift").select { |file|
         content = File.read file
-        content.match(/\/\/@/)
+        content.match(/\s*\/\/@/)
       }
     end
 
