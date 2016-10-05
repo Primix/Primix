@@ -8,7 +8,7 @@ module Primix
     end
 
     SWIFT_STRING_REGEX = /("([^"\\]|\\.)*")/
-    PLACEHOLDER_STRING = /primix_placeholder_string_index_\d+/
+    PLACEHOLDER_STRING = /primix_placeholder_string_index_(\d+)/
 
     def transform!
       @all_swift_strings = {}
@@ -42,7 +42,7 @@ module Primix
           end
         end
       elsif data.is_a?(String) && data.match(PLACEHOLDER_STRING)
-        count = data.scan(/primix_placeholder_string_index_(\d+)/).flatten.last.to_i
+        count = data.scan(PLACEHOLDER_STRING).flatten.last.to_i
         eval @all_swift_strings[count]
       else
         data
