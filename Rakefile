@@ -4,9 +4,9 @@ require_relative 'lib/primix/version'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :rspec => :spec
-
 task :default => :spec
+
+task :rspec => :spec
 
 task :install => [:build, :install, :clean]
 
