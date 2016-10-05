@@ -11,7 +11,7 @@ module Primix
     PLACEHOLDER_STRING = /primix_placeholder_string_index_\d+/
 
     def transform!
-      @all_swift_strings = data.scan(SWIFT_STRING_REGEX).map(&:first)
+      @all_swift_strings = {}
 
       replace_strings_by_placeholder
       result = transform_value(data)
@@ -21,6 +21,7 @@ module Primix
     def replace_strings_by_placeholder
       0.tap do |count|
         while data.match SWIFT_STRING_REGEX
+          @all_swift_strings[count] = data[SWIFT_STRING_REGEX]
           data.sub! SWIFT_STRING_REGEX, "primix_placeholder_string_index_#{count}"
           count += 1
         end
@@ -41,7 +42,8 @@ module Primix
           end
         end
       elsif data.is_a?(String) && data.match(PLACEHOLDER_STRING)
-        eval @all_swift_strings.shift
+        count = data.match(/primix_placeholder_string_index_(\d+)/).to_a.last.to_i
+        eval @all_swift_strings[count]
       else
         data
       end
