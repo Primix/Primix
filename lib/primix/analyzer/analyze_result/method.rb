@@ -1,4 +1,4 @@
-require "primix/analyzer/ast/method"
+require "primix/analyzer/ast/method_decl"
 require "primix/analyzer/ast/constructor"
 
 module Primix

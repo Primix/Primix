@@ -6,7 +6,9 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :rspec => :spec
 
-task :default => [:build, :install, :clean]
+task :default => :spec
+
+task :install => [:build, :install, :clean]
 
 task :release => [:build, :push, :clean]
 
