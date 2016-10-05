@@ -42,7 +42,7 @@ module Primix
           end
         end
       elsif data.is_a?(String) && data.match(PLACEHOLDER_STRING)
-        count = data.match(/primix_placeholder_string_index_(\d+)/).to_a.last.to_i
+        count = data.scan(/primix_placeholder_string_index_(\d+)/).flatten.last.to_i
         eval @all_swift_strings[count]
       else
         data
