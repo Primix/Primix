@@ -25,11 +25,12 @@ module Primix
     end
 
     it "transforms string with escaped character" do
-      expect(transform_data("\"111\"\"111\"")).to eq("111\"\"111")
+      expect(transform_data("\"111\\\"\\\"111\"")).to eq("111\"\"111")
     end
 
     it "transforms integer array" do
       expect(transform_data("[1, 2, 3]")).to eq([1, 2, 3])
+      expect(transform_data("[1]")).to eq([1])
     end
 
     it "transforms complicated array" do
@@ -43,6 +44,10 @@ module Primix
     it "tramsforms ordinary dictionaries" do
       expect(transform_data("[1: 6]")).to eq({ 1 => 6 })
       expect(transform_data("[ \"key\": \"value\"]")).to eq({ "key" => "value" })
+    end
+
+    it "transforms complicated nested dictionaries" do
+      expect(transform_data("[ \"key\": \"value\", 1: [1, 2, 3, \"haha\"]]")).to eq({ "key" => "value" , 1 => [1, 2, 3, "haha"]})
     end
 
     def transform_data(data)
