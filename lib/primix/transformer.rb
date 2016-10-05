@@ -49,11 +49,7 @@ module Primix
 
     def transform_value(value)
       value.strip!
-      if is_bool?(value)
-        transform_bool_value(value)
-      elsif is_number?(value)
-        eval value
-      elsif is_array?(value)
+      if is_array?(value)
         split_element_by_comma(value.strip[1..-2]).map { |v| transform_value v }
       elsif is_hash?(value)
         split_element_by_comma(value.strip[1..-2]).reduce({}) do |memo, v|
@@ -61,27 +57,11 @@ module Primix
           memo[transform_value(key)] = transform_value(value)
           memo
         end
-      else
+      elsif value.start_with?("primix_placeholder_string_index_")
         value
-      end
-    end
-
-    def transform_bool_value(value)
-      if value == "true"
-        true
-      elsif value == "false"
-        false
       else
-        raise "Unknown bool value #{value}."
+        eval value
       end
-    end
-
-    def is_bool?(value)
-      value == "true" || value == "false"
-    end
-
-    def is_number?(value)
-      value.match(/^-?\d*(\.\d+)?$/)
     end
 
     def is_array?(value)
@@ -94,7 +74,6 @@ module Primix
     end
 
     def split_element_by_comma(value)
-      # p value
       [].tap do |result|
         [0, ""].tap do |level, current|
           value.chars.each_with_index do |char, index|
@@ -109,7 +88,6 @@ module Primix
             if index == value.chars.count - 1
               result << current
             end
-            # p current, value
           end
         end
       end
