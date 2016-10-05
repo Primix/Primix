@@ -40,8 +40,9 @@ module Primix
       expect(transform_data("[1, 2, 3, [4, 5, 6]]")).to eq([1, 2, 3, [4, 5, 6]])
     end
 
-    it "tramsforms ordinary dictionary" do
-      expect(transform_data("[1: 6]")).to eq({1 => 6})
+    it "tramsforms ordinary dictionaries" do
+      expect(transform_data("[1: 6]")).to eq({ 1 => 6 })
+      expect(transform_data("[ \"key\": \"value\"]")).to eq({ "key" => "value" })
     end
 
     def transform_data(data)
