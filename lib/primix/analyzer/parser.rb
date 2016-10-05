@@ -16,6 +16,8 @@ module Primix
       attr_accessor :current_index
       attr_accessor :klass
 
+      DEBUG = false
+
       def initialize(tokens)
         @all_tokens = extract_model_information(tokens).map { |token| Token.new token }
         @current_index = 0
@@ -60,7 +62,7 @@ module Primix
       def shift_token
         stack << all_tokens[@current_index]
         @current_index += 1
-        p "shift: #{stack.map(&:type)}"
+        p "shift: #{stack.map(&:type)}" if DEBUG
       end
 
       def reduce_grammar
@@ -76,7 +78,7 @@ module Primix
           reduce_to_outer_key_types
 
           if has_reduced
-            p "reduce: #{token_in_stack_types}"
+            p "reduce: #{token_in_stack_types}" if DEBUG
             reduce_grammar
           end
         end
