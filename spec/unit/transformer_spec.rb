@@ -19,7 +19,7 @@ module Primix
       expect(transform_data("-1.1")).to eq(-1.1)
     end
 
-    it "transforms common string" do
+    it "transforms common strings" do
       expect(transform_data("\"11\"")).to eq("11")
       expect(transform_data("\"draveness\"")).to eq("draveness")
     end
@@ -28,8 +28,16 @@ module Primix
       expect(transform_data("\"111\"\"111\"")).to eq("111\"\"111")
     end
 
-    it "transforms array" do
+    it "transforms integer array" do
+      expect(transform_data("[1, 2, 3]")).to eq([1, 2, 3])
+    end
 
+    it "transforms complicated array" do
+      expect(transform_data("[true, \"string\", 3]")).to eq([true, "string", 3])
+    end
+
+    it "transforms nested array" do
+      expect(transform_data("[1, 2, 3, [4, 5, 6]]")).to eq([1, 2, 3, [4, 5, 6]])
     end
 
     it "tramsforms dictionary" do
