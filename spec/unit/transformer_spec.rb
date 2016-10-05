@@ -25,7 +25,7 @@ module Primix
     end
 
     it "transforms string with escaped character" do
-      expect(transform_data("\"111\\\"\\\"111\"")).to eq("111\"\"111")
+      expect(transform_data("\":11[1\\\"\\\"111\"")).to eq(":11[1\"\"111")
     end
 
     it "transforms integer array" do
