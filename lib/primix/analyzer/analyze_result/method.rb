@@ -34,6 +34,14 @@ module Primix
           @modifiers.include? "static"
         end
 
+        def selector
+          result = ""
+          result += name
+          result += "(" + @param_labels.map do |label|
+            "#{label}:"
+          end.join("") + ")"
+        end
+
         def signature
           result = ""
           if is_class_method?
