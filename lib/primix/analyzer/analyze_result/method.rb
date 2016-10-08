@@ -5,15 +5,17 @@ module Primix
   class Analyzer
     class AnalyzeResult
       class Method
-        attr_reader :name
-        attr_reader :param_labels
-        attr_reader :param_keys
-        attr_reader :param_types
-        attr_reader :default_values
-        attr_reader :return_type
-        attr_reader :modifiers
+        attr_accessor :name
+        attr_accessor :kindname
+        attr_accessor :param_labels
+        attr_accessor :param_keys
+        attr_accessor :param_types
+        attr_accessor :default_values
+        attr_accessor :return_type
+        attr_accessor :modifiers
 
-        def initialize(element)
+        def initialize(element = nil)
+          return unless element
           if element.type == :METHOD
             @name = element.identifier.lexeme
             @modifiers = element.modifiers.map(&:lexeme)
@@ -23,6 +25,13 @@ module Primix
             @default_values = param_types.map(&:key_type).map(&:default_value).map { |e| if e == nil then nil else Transformer.transform!(e.lexeme) end }
             @param_types    = param_types.map(&:key_type).map(&:real_type).map(&:desc)
             @return_type    = element.return_type.desc
+            @kindname = if is_class_method?
+                          "function.class"
+                        elsif is_static_method?
+                          "function.static"
+                        else
+                          "function.instance"
+                        end
           end
         end
 
@@ -57,19 +66,9 @@ module Primix
           end.join(", ") + ")" +  " -> " + @return_type
         end
 
-        def kindname
-          if is_class_method?
-            "function.class"
-          elsif is_static_method?
-            "function.static"
-          else
-            "function.instance"
-          end
-        end
-
         def to_hash
           hash = {}
-          hash[:kind] = kindname
+          hash[:kindname] = kindname
           hash[:name] = name
           hash[:substructure] = []
           @param_labels.each_with_index do |label, index|
@@ -80,6 +79,24 @@ module Primix
             hash[:substructure] << { :kindname => kindname, :defaultvalue => default, :name => name, :typename => typename }
           end
           hash
+        end
+
+        class << self
+          def from_hash(hash)
+            method = Method.new
+            method.kindname = hash[:kindname]
+            method.name = hash[:name]
+
+            method.default_values = []
+            method.param_keys = []
+            method.param_types = []
+            hash[:substructure].each do |attribute|
+              attribute.default_values << attribute[:defaultvalue]
+              attribute.param_keys     << attribute[:name]
+              attribute.param_types    << attribute[:typename]
+            end
+            method
+          end
         end
       end
     end

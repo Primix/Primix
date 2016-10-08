@@ -2,16 +2,25 @@ module Primix
   class Analyzer
     class AnalyzeResult
       class Attribute
-        attr_reader :name
-        attr_reader :typename
-        attr_reader :value
-        attr_reader :default_value
-        attr_reader :modifiers
+        attr_accessor :name
+        attr_accessor :kindname
+        attr_accessor :typename
+        attr_accessor :value
+        attr_accessor :default_value
+        attr_accessor :modifiers
 
-        def initialize(element)
+        def initialize(element = nil)
+          return unless element
           @name     = element.identifier.lexeme
           @typename = element.real_type.desc
           @modifiers = element.modifiers.map(&:lexeme)
+          @kindname = if is_class_method?
+                        "var.class"
+                      elsif is_static_method?
+                        "var.static"
+                      else
+                        "var.instance"
+                      end
           if element.default_value
             @default_value = Transformer.transform!(element.default_value.value.lexeme)
           end
@@ -25,16 +34,6 @@ module Primix
           @modifiers.include? "static"
         end
 
-        def kindname
-          if is_class_method?
-            "var.class"
-          elsif is_static_method?
-            "var.static"
-          else
-            "var.instance"
-          end
-        end
-
         def to_hash
           hash = {}
           hash[:kindname] = kindname
@@ -42,6 +41,17 @@ module Primix
           hash[:typename] = typename
           hash[:defaultvalue] = default_value
           hash
+        end
+
+        class << self
+          def from_hash(hash)
+            attribute = Attribute.new
+            attribute.kindname = hash[:kindname]
+            attribute.typename = hash[:typename]
+            attribute.name = hash[:name]
+            attribute.default_value = hash[:defaultvalue]
+            attribute
+          end
         end
       end
     end
