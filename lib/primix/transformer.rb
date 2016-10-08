@@ -3,6 +3,12 @@ module Primix
     attr_reader :data
     attr_accessor :all_swift_strings
 
+    class << self
+      def transform!(data)
+        Transformer.new(data).transform!
+      end
+    end
+
     def initialize(data)
       @data = data
     end

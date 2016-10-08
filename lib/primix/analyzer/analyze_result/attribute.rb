@@ -10,10 +10,10 @@ module Primix
 
         def initialize(element)
           @name     = element.identifier.lexeme
-          @typename = element.real_type.identifier.lexeme
+          @typename = element.real_type.desc
           @modifiers = element.modifiers.map(&:lexeme)
           if element.default_value
-            @default_value = element.default_value.value.lexeme
+            @default_value = Transformer.transform!(element.default_value.value.lexeme)
           end
         end
 

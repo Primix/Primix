@@ -20,7 +20,7 @@ module Primix
             param_types = element.param_types
             @param_labels   = param_types.map(&:label).map(&:lexeme)
             @param_keys     = param_types.map(&:key_type).map(&:identifier).map(&:lexeme)
-            @default_values = param_types.map(&:key_type).map(&:default_value).map { |e| if e == nil then nil else e.lexeme end }
+            @default_values = param_types.map(&:key_type).map(&:default_value).map { |e| if e == nil then nil else Transformer.transform!(e.lexeme) end }
             @param_types    = param_types.map(&:key_type).map(&:real_type).map(&:desc)
             @return_type    = element.return_type.desc
           end
