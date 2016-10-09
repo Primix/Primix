@@ -1,3 +1,5 @@
+require "fileutils"
+
 module Primix
   class Command
     class Install < Command
@@ -18,14 +20,19 @@ module Primix
         analyzer = analyzer_for_project_folder @project_folder
         file_meta_hash = analyzer.analyze!
 
+        FileUtils.mkdir_p "#{@project_folder}/post_mix"
+
         Dir["mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{Dir.pwd}/#{file}")  }
 
-        command_processor_hash = derived_processors.map do |processor|
-          { processor.command => processor }
-        end
-        p command_processor_hash
+        command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
         file_meta_hash.each do |file, meta|
-
+          meta.annotations.each do |annotation|
+            command_processor_hash.each do |command, processor|
+              if annotation.match(command)
+                puts processor.new(meta).run!
+              end
+            end
+          end
         end
 
       end
