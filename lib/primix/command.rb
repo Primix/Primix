@@ -8,7 +8,7 @@ module Primix
     self.abstract_command = true
     self.command = 'mix'
     self.version = VERSION
-    self.description = "Primix, make Swift 'dynamic' again."
+    self.description = "Primix, Make Swift 'dynamic' again."
 
     def self.run(argv)
       super argv
