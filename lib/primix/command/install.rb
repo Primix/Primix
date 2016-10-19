@@ -20,16 +20,19 @@ module Primix
         analyzer = analyzer_for_project_folder @project_folder
         file_meta_hash = analyzer.analyze!
 
-        FileUtils.mkdir_p "#{@project_folder}/post_mix"
+        FileUtils.mkdir_p "#{@project_folder}/postmix"
 
         Dir["mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{Dir.pwd}/#{file}")  }
+
 
         command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
         file_meta_hash.each do |file, meta|
           meta.annotations.each do |annotation|
             command_processor_hash.each do |command, processor|
               if annotation.match(command)
-                puts processor.new(meta).run!
+                annotation_file_name = command + "_" + file.split("/").reject { |e| e == "." }.join("_")
+                content = processor.new(meta).run!
+                File.write "postmix/#{annotation_file_name}", content
               end
             end
           end
