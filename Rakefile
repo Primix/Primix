@@ -8,7 +8,7 @@ task :default => :spec
 
 task :rspec => :spec
 
-task :install => [:build, :install, :clean]
+task :pre => [:build, :install, :clean]
 
 task :release => [:build, :push, :clean]
 
