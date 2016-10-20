@@ -24,7 +24,6 @@ module Primix
 
         Dir["mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{Dir.pwd}/#{file}")  }
 
-
         command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
         file_meta_hash.each do |file, meta|
           meta.annotations.each do |annotation|
