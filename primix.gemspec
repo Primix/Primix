@@ -16,8 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir["lib/**/*.rb"] + %w{ README.md LICENSE bin/mx }
 
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.executables = %w{ mx }
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency 'colored',       '~> 1.2'
