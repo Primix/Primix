@@ -35,15 +35,22 @@ module Primix
 
       def integrate_to_project
         project = Xcodeproj::Project.open(config.xcodeproj_path)
-        project.main_group.find_subpath("Mix", true)
-        project.main_group.find_subpath("Postmix", true)
+        ["Mix", "Postmix"].each do |group_name|
+          group = project.main_group.find_subpath(group_name, true)
+          group.clear
+          group.set_source_tree('SOURCE_ROOT')
+        end
         project.save
       end
 
       def add_annotation_processor(annotation)
+        # path in iOS project
         annotation_file_path = "#{config.mix_folder}/#{annotation}_mix.rb"
-        content = File.read annotation_file_path
+        # path which relative to init.rb file
+        origianl_path = Pathname.new(__FILE__) + Pathname.new("../../../../mix/#{annotation}_mix.rb")
+        content = File.read origianl_path
         File.write annotation_file_path, content
+
         project = Xcodeproj::Project.open(config.xcodeproj_path)
         mix_group = project.main_group.find_subpath("Mix", true)
         mix_group.new_reference(annotation_file_path)

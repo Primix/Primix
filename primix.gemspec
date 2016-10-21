@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/primix/primix"
   spec.license       = "MIT"
 
-  spec.files         = Dir["lib/**/*.rb"] + %w{ README.md LICENSE bin/mx }
+  spec.files         = Dir["lib/**/*.rb"] + Dir["mix/**/*.rb"] + %w{ README.md LICENSE bin/mx }
 
   spec.executables = %w{ mx }
   spec.require_paths = ["lib"]
