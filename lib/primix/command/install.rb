@@ -6,8 +6,11 @@ module Primix
       require "primix/analyzer"
       require "primix/processor"
 
-      self.summary = "Integrate primix into project."
-      self.description = ""
+      self.summary = "Regenerate postmix files in folder."
+      self.description = <<-DESC
+      Run all scripts which located in mix folder with a suffix mix and generate
+      swift files or execute commands.
+      DESC
 
       attr_reader :project_folder
 
