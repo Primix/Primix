@@ -1,5 +1,3 @@
-require "fileutils"
-
 module Primix
   class Command
     class Install < Command
@@ -15,8 +13,9 @@ module Primix
       attr_reader :project_folder
 
       def initialize(argv)
+        validate!
         super argv
-        @project_folder = argv.arguments[0] || "."
+        @project_folder = config.installation_root
       end
 
       def run
@@ -25,7 +24,7 @@ module Primix
 
         FileUtils.mkdir_p "#{@project_folder}/postmix"
 
-        Dir["mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{Dir.pwd}/#{file}")  }
+        Dir["#{@project_folder}/mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{Dir.pwd}/#{file}")  }
 
         command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
         file_meta_hash.each do |file, meta|
@@ -34,7 +33,7 @@ module Primix
               if annotation.match(command)
                 content = processor.new(meta).run!
 
-                directory = File.dirname "postmix/#{file}"
+                directory = File.dirname "#{@project_folder}/postmix/#{file}"
                 unless File.directory?(directory)
                   FileUtils.mkdir_p(directory)
                 end
@@ -53,6 +52,11 @@ module Primix
         # target = project.targets.first
 
         project.save
+      end
+
+      def validate!
+        # super
+        raise Informative, 'No Mixfile in current directory' unless config.mixfile_in_dir(Pathname.pwd)
       end
 
       private

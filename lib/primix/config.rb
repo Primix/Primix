@@ -21,7 +21,7 @@ module Primix
 
     # @!group UI
 
-    # @return [Bool] Whether CocoaPods should provide detailed output about the
+    # @return [Bool] Whether Primix should provide detailed output about the
     #         performed actions.
     #
     attr_accessor :verbose
@@ -43,7 +43,7 @@ module Primix
 
     # @!group Paths
 
-    # @return [Pathname] the root of the MetaModel installation where the
+    # @return [Pathname] the root of the Primix installation where the
     #         meta folder is located.
     #
     def installation_root
@@ -81,6 +81,14 @@ module Primix
     #
     def mixfile_path
       @mixfile_in_dir ||= installation_root + 'mixfile'
+    end
+
+    def mix_folder
+      installation_root + "mix"
+    end
+
+    def post_mix_folder
+      installation_root + "postmix"
     end
 
     # Returns the path of the mixfile in the given dir if any exists.

@@ -12,6 +12,9 @@ module Primix
     end
   end
 
+  require "fileutils"
+  require "pathname"
+
   require "primix/config"
 
   # Loaded immediately after dependencies to ensure proper override of their

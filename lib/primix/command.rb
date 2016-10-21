@@ -3,7 +3,10 @@ require 'claide'
 
 module Primix
   class Command < CLAide::Command
+    require_relative 'command/init'
     require_relative 'command/install'
+
+    include Config::Mixin
 
     self.abstract_command = true
     self.command = 'mix'
@@ -15,6 +18,7 @@ module Primix
     end
 
     def initialize(argv)
+      config.verbose = true
       super
     end
   end
