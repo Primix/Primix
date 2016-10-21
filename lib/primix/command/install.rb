@@ -29,9 +29,14 @@ module Primix
           meta.annotations.each do |annotation|
             command_processor_hash.each do |command, processor|
               if annotation.match(command)
-                annotation_file_name = command + "_" + file.split("/").reject { |e| e == "." }.join("_")
                 content = processor.new(meta).run!
-                File.write "postmix/#{annotation_file_name}", content
+
+                directory = File.dirname "postmix/#{file}"
+                unless File.directory?(directory)
+                  FileUtils.mkdir_p(directory)
+                end
+
+                File.write "#{directory}/#{meta.name}+#{command}.swift", content
               end
             end
           end
