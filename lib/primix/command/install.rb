@@ -21,6 +21,7 @@ module Primix
         analyzer = analyzer_for_project_folder config.installation_root
         file_meta_hash = analyzer.analyze!
 
+        clear_postmix_group
         require_mix_files
 
         command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
@@ -48,6 +49,16 @@ module Primix
         end
       end
 
+      def clear_postmix_group
+        project = Xcodeproj::Project.open(config.xcodeproj_path)
+
+        postmix_group = project.main_group.find_subpath("Postmix", true)
+        postmix_group.clear
+        postmix_group.set_source_tree('SOURCE_ROOT')
+
+        project.save
+      end
+
       def require_mix_files
         Dir["#{config.installation_root}/Mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{file}")  }
       end
@@ -60,6 +71,9 @@ module Primix
         file_ref = current_group.new_reference(file)
 
         target = project.targets.first
+        target.source_build_phase.files_references.each do |f|
+          target.source_build_phase.remove_file_reference(f) if f == file_ref
+        end
         target.add_file_references([file_ref])
 
         project.save
