@@ -1,4 +1,5 @@
 require 'active_support/multibyte/unicode'
+require 'xcodeproj'
 
 module Primix
   # Stores the global configuration of Primix.
@@ -81,6 +82,10 @@ module Primix
     #
     def mixfile_path
       @mixfile_in_dir ||= installation_root + 'mixfile'
+    end
+
+    def xcodeproj
+      Xcodeproj::Project.open(xcodeproj_path)
     end
 
     def xcodeproj_path

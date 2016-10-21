@@ -34,7 +34,7 @@ module Primix
       end
 
       def integrate_to_project
-        project = Xcodeproj::Project.open(config.xcodeproj_path)
+        project = config.xcodeproj
         ["Mix", "Postmix"].each do |group_name|
           group = project.main_group.find_subpath(group_name, true)
           group.clear
@@ -51,7 +51,7 @@ module Primix
         content = File.read origianl_path
         File.write annotation_file_path, content
 
-        project = Xcodeproj::Project.open(config.xcodeproj_path)
+        project = config.xcodeproj
         mix_group = project.main_group.find_subpath("Mix", true)
         mix_group.new_reference(annotation_file_path)
         project.save

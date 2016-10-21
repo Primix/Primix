@@ -50,7 +50,7 @@ module Primix
       end
 
       def clear_postmix_group
-        project = Xcodeproj::Project.open(config.xcodeproj_path)
+        project = config.xcodeproj
 
         postmix_group = project.main_group.find_subpath("Postmix", true)
         postmix_group.clear
@@ -64,7 +64,7 @@ module Primix
       end
 
       def add_group_to_project(group, file)
-        project = Xcodeproj::Project.open(config.xcodeproj_path)
+        project = config.xcodeproj
 
         current_group = project.main_group.find_subpath("#{group}", true)
         current_group.set_source_tree('SOURCE_ROOT')
