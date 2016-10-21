@@ -13,7 +13,6 @@ module Primix
       attr_reader :project_folder
 
       def initialize(argv)
-        validate!
         super argv
         @project_folder = config.installation_root
       end
@@ -55,7 +54,6 @@ module Primix
       end
 
       def validate!
-        # super
         raise Informative, 'No Mixfile in current directory' unless config.mixfile_in_dir(Pathname.pwd)
       end
 

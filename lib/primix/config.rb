@@ -83,6 +83,12 @@ module Primix
       @mixfile_in_dir ||= installation_root + 'mixfile'
     end
 
+    def xcodeproj_path
+      projects = Dir["#{installation_root}/*.xcodeproj"]
+      raise Informative, "Multiple xcodeproj in current folder." if projects.count > 1
+      projects.first
+    end
+
     def mix_folder
       installation_root + "mix"
     end

@@ -1,3 +1,5 @@
+require "xcodeproj"
+
 module Primix
   class Command
     class Init < Command
@@ -22,6 +24,12 @@ module Primix
           UI.section "Creating `mix` and `postmix` folder for Primix" do
             FileUtils.mkdir_p(config.mix_folder)
             FileUtils.mkdir_p(config.post_mix_folder)
+          end
+          UI.section "Adding `mix` and `postmix` folder into project" do
+              project = Xcodeproj::Project.open(config.xcodeproj_path)
+              project.main_group.find_subpath("mix", true)
+              project.main_group.find_subpath("postmix", true)
+              project.save
           end
         end
       end
