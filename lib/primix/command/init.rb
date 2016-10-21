@@ -26,12 +26,16 @@ module Primix
             FileUtils.mkdir_p(config.post_mix_folder)
           end
           UI.section "Adding `mix` and `postmix` folder into project" do
-              project = Xcodeproj::Project.open(config.xcodeproj_path)
-              project.main_group.find_subpath("mix", true)
-              project.main_group.find_subpath("postmix", true)
-              project.save
+            integrate_to_project
           end
         end
+      end
+
+      def integrate_to_project
+        project = Xcodeproj::Project.open(config.xcodeproj_path)
+        project.main_group.find_subpath("mix", true)
+        project.main_group.find_subpath("postmix", true)
+        project.save
       end
 
       def validate!
