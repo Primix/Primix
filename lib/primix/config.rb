@@ -90,11 +90,11 @@ module Primix
     end
 
     def mix_folder
-      installation_root + "mix"
+      installation_root + "Mix"
     end
 
-    def post_mix_folder
-      installation_root + "postmix"
+    def postmix_folder
+      installation_root + "Postmix"
     end
 
     # Returns the path of the mixfile in the given dir if any exists.

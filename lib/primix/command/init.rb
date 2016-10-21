@@ -21,20 +21,23 @@ module Primix
               source.puts "primix_version '#{VERSION}'\n\n"
             end
           end
-          UI.section "Creating `mix` and `postmix` folder for Primix" do
+          UI.section "Creating `Mix` and `Postmix` folder for Primix" do
             FileUtils.mkdir_p(config.mix_folder)
-            FileUtils.mkdir_p(config.post_mix_folder)
+            FileUtils.mkdir_p(config.postmix_folder)
           end
-          UI.section "Adding `mix` and `postmix` folder into project" do
+          UI.section "Adding `Mix` and `Postmix` folder into project" do
             integrate_to_project
+          end
+          UI.section "Adding default mix file " do
+
           end
         end
       end
 
       def integrate_to_project
         project = Xcodeproj::Project.open(config.xcodeproj_path)
-        project.main_group.find_subpath("mix", true)
-        project.main_group.find_subpath("postmix", true)
+        project.main_group.find_subpath("Mix", true)
+        project.main_group.find_subpath("Postmix", true)
         project.save
       end
 

@@ -18,10 +18,10 @@ module Primix
       end
 
       def run
-        analyzer = analyzer_for_project_folder @project_folder
+        analyzer = analyzer_for_project_folder config.installation_root
         file_meta_hash = analyzer.analyze!
 
-        Dir["#{@project_folder}/mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{file}")  }
+        require_mix_files
 
         command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
         file_meta_hash.each do |file, meta|
@@ -31,9 +31,9 @@ module Primix
                 content = processor.new(meta).run!
 
                 project_root = Pathname.new config.installation_root
-                post_mix_folder = Pathname.new "postmix"
+                postmix_folder = Pathname.new "Postmix"
                 relative_folder = Pathname.new(File.dirname(file)).relative_path_from project_root
-                directory = post_mix_folder + relative_folder
+                directory = postmix_folder + relative_folder
 
                 unless File.directory?(directory)
                   FileUtils.mkdir_p(directory)
@@ -46,7 +46,10 @@ module Primix
             end
           end
         end
+      end
 
+      def require_mix_files
+        Dir["#{config.installation_root}/Mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{file}")  }
       end
 
       def add_group_to_project(group, file)
@@ -75,7 +78,6 @@ module Primix
       def derived_processors
         ObjectSpace.each_object(Class).with_object([]) { |k,a| a << k if k < Primix::Processor }
       end
-
     end
   end
 end
