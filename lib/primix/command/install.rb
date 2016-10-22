@@ -15,22 +15,20 @@ module Primix
       def initialize(argv)
         super argv
         @project_folder = config.installation_root
+        @project = config.xcodeproj
       end
 
       def run
         clear_postmix_group
         require_mix_files
         analyzing_annotations
+        @project.save
       end
 
       def clear_postmix_group
-        project = config.xcodeproj
-
-        postmix_group = project.main_group.find_subpath("Postmix", true)
+        postmix_group = @project.main_group.find_subpath("Postmix", true)
         postmix_group.clear
         postmix_group.set_source_tree('SOURCE_ROOT')
-
-        project.save
       end
 
       def require_mix_files
@@ -62,19 +60,15 @@ module Primix
       end
 
       def add_group_to_project(group, file)
-        project = config.xcodeproj
-
-        current_group = project.main_group.find_subpath("#{group}", true)
+        current_group = @project.main_group.find_subpath("#{group}", true)
         current_group.set_source_tree('SOURCE_ROOT')
         file_ref = current_group.new_reference(file)
 
-        target = project.targets.first
+        target = @project.targets.first
         target.source_build_phase.files_references.each do |f|
           target.source_build_phase.remove_file_reference(f) if f == file_ref
         end
         target.add_file_references([file_ref])
-
-        project.save
       end
 
       def validate!
