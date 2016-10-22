@@ -11,7 +11,7 @@ module Primix
 
     def analyze!
       {}.tap do |file_klass_hash|
-        files_contain_annotation.map { |file|
+        files_contain_annotation.map do |file|
           annotation_content_hash = extract_content file
           annotation_content_hash.each do |annotations, content|
             tokenizer = create_tokenizer content
@@ -20,15 +20,15 @@ module Primix
             klass.append_annotations(annotations)
             file_klass_hash[file] = klass
           end
-        }
+        end
       end
     end
 
     def files_contain_annotation
-      Dir.glob("#{project_folder}/**/*.swift").select { |file|
+      Dir.glob("#{project_folder}/**/*.swift").select do |file|
         content = File.read file
         content.match(/\s*\/\/@/)
-      }
+      end
     end
 
     def extract_content(file)

@@ -18,35 +18,9 @@ module Primix
       end
 
       def run
-        analyzer = analyzer_for_project_folder config.installation_root
-        file_meta_hash = analyzer.analyze!
-
         clear_postmix_group
         require_mix_files
-
-        command_processor_hash = Hash[ derived_processors.collect { |v| [v.command, v] }]
-        file_meta_hash.each do |file, meta|
-          meta.annotations.each do |annotation|
-            command_processor_hash.each do |command, processor|
-              if annotation.match(command)
-                content = processor.new(meta).run!
-
-                project_root = Pathname.new config.installation_root
-                postmix_folder = Pathname.new "Postmix"
-                relative_folder = Pathname.new(File.dirname(file)).relative_path_from project_root
-                directory = postmix_folder + relative_folder
-
-                unless File.directory?(directory)
-                  FileUtils.mkdir_p(directory)
-                end
-
-                File.write "#{directory}/#{meta.name}+#{command}.swift", content
-
-                add_group_to_project(directory, "#{directory}/#{meta.name}+#{command}.swift")
-              end
-            end
-          end
-        end
+        analyzing_annotations
       end
 
       def clear_postmix_group
@@ -61,6 +35,28 @@ module Primix
 
       def require_mix_files
         Dir["#{config.installation_root}/Mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{file}")  }
+      end
+
+      def analyzing_annotations
+        analyzer_for_project_folder.analyze!.each do |file, meta|
+          meta.annotations.each do |annotation|
+            Hash[ derived_processors.collect { |v| [v.command, v] }].each do |command, processor|
+              if annotation.match(command)
+                content = processor.new(meta).run!
+
+                directory = postmix_file_folder file
+                unless File.directory?(directory)
+                  FileUtils.mkdir_p(directory)
+                end
+
+                file_path = "#{directory}/#{meta.name}+#{command}.swift"
+                File.write file_path, content
+
+                add_group_to_project(directory, file_path)
+              end
+            end
+          end
+        end
       end
 
       def add_group_to_project(group, file)
@@ -85,12 +81,19 @@ module Primix
 
       private
 
-      def analyzer_for_project_folder(project_folder)
-        Primix::Analyzer.new project_folder
+      def analyzer_for_project_folder
+        Primix::Analyzer.new @project_folder
       end
 
       def derived_processors
         ObjectSpace.each_object(Class).with_object([]) { |k,a| a << k if k < Primix::Processor }
+      end
+
+      def postmix_file_folder(file)
+        project_root = Pathname.new (project_folder)
+        postmix_folder = Pathname.new "Postmix"
+        relative_folder = Pathname.new(File.dirname(file)).relative_path_from project_root
+        postmix_folder + relative_folder
       end
     end
   end
