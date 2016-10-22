@@ -42,20 +42,22 @@ module Primix
           meta.annotations.each do |annotation|
             Hash[ derived_processors.collect { |v| [v.command, v] }].each do |command, processor|
               if annotation.match(command)
-                content = processor.new(meta).run!
-
                 directory = postmix_file_folder file
-                unless File.directory?(directory)
-                  FileUtils.mkdir_p(directory)
-                end
-
                 file_path = "#{directory}/#{meta.name}+#{command}.swift"
-                File.write file_path, content
+
+                make_directory directory
+                File.write file_path, processor.new(meta).run!
 
                 add_group_to_project(directory, file_path)
               end
             end
           end
+        end
+      end
+
+      def make_directory(directory)
+        unless File.directory?(directory)
+          FileUtils.mkdir_p(directory)
         end
       end
 
