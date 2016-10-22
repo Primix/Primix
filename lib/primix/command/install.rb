@@ -18,10 +18,18 @@ module Primix
       end
 
       def run
-        clear_postmix_group
-        require_mix_files
-        analyzing_annotations
-        @project.save
+        UI.section "Installing primix annotations" do
+          UI.section "Clearing previous postmix files" do
+            clear_postmix_group
+          end
+          UI.section "Requiring all mix ruby scripts" do
+            require_mix_files
+          end
+          UI.section "Analyzing annotations" do
+            analyzing_annotations
+          end
+          @project.save
+        end
       end
 
       def clear_postmix_group
@@ -31,11 +39,15 @@ module Primix
       end
 
       def require_mix_files
-        Dir["#{config.installation_root}/Mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each {|file| require ("#{file}")  }
+        Dir["#{config.installation_root}/Mix/*.rb"].select { |f| f.match(/_mix.rb/) }.each do |file|
+          UI.message "-> ".green + "Using `#{File.basename file}`"
+          require ("#{file}")
+        end
       end
 
       def analyzing_annotations
         analyzer_for_project_folder.analyze!.each do |file, meta|
+          UI.message "-> ".green + "Analyzing `#{Pathname.new(file).relative_path_from config.installation_root}`"
           meta.annotations.each do |annotation|
             Hash[ derived_processors.collect { |v| [v.command, v] }].each do |command, processor|
               if annotation.match(command)
@@ -44,7 +56,6 @@ module Primix
 
                 make_directory directory
                 File.write file_path, processor.new(meta).run!
-
                 add_group_to_project(directory, file_path)
               end
             end
@@ -85,7 +96,7 @@ module Primix
       end
 
       def postmix_file_folder(file)
-        project_root = Pathname.new (project_folder)
+        project_root = Pathname.new config.installation_root
         postmix_folder = Pathname.new "Postmix"
         relative_folder = Pathname.new(File.dirname(file)).relative_path_from project_root
         postmix_folder + relative_folder
