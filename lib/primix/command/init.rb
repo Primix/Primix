@@ -15,22 +15,23 @@ module Primix
 
       def run
         UI.section "Initiating Primix for current project" do
-          FileUtils.touch(@mixfile_path)
-          @mixfile_path.open('w') do |source|
-            source.puts "primix_version '#{VERSION}'\n\n"
-          end
-
-          FileUtils.mkdir_p(config.mix_folder)
-          FileUtils.mkdir_p(config.postmix_folder)
+          initialize_primix_project
           integrate_to_project
 
           UI.section "Adding default annotation processors" do
-            [:json].each do |processor|
-              UI.message "-> ".green + "Using #{processor} processor"
-              add_annotation_processor(processor)
-            end
+            add_annotation_processors([:json])
           end
         end
+      end
+
+      def initialize_primix_project
+        FileUtils.touch(@mixfile_path)
+        @mixfile_path.open('w') do |source|
+          source.puts "primix_version '#{VERSION}'\n\n"
+        end
+
+        FileUtils.mkdir_p(config.mix_folder)
+        FileUtils.mkdir_p(config.postmix_folder)
       end
 
       def integrate_to_project
@@ -41,6 +42,13 @@ module Primix
           group.set_source_tree('SOURCE_ROOT')
         end
         project.save
+      end
+
+      def add_annotation_processors(processors)
+        processors.each do |processor|
+          UI.message "-> ".green + "Using #{processor} processor"
+          add_annotation_processor(processor)
+        end
       end
 
       def add_annotation_processor(annotation)
