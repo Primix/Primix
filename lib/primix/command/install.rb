@@ -14,7 +14,6 @@ module Primix
 
       def initialize(argv)
         super argv
-        @project_folder = config.installation_root
         @project = config.xcodeproj
       end
 
@@ -78,7 +77,7 @@ module Primix
       private
 
       def analyzer_for_project_folder
-        Primix::Analyzer.new @project_folder
+        Primix::Analyzer.new config.installation_root
       end
 
       def derived_processors
