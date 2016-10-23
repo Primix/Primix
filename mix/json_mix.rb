@@ -4,11 +4,11 @@ class Json < Primix::Processor
   self.command = "json"
 
   def run!
-"""extension #{meta_info.name} {
-    static func parse(json: Any) -> #{meta_info.name}? {
+"""extension #{meta.name} {
+    static func parse(json: Any) -> #{meta.name}? {
         guard let json = json as? [String: Any] else { return nil }
         guard #{json_extraction_lists.join(",\n\t\t")} else { return nil }
-        return #{meta_info.name}(#{meta_info.attributes.map { |a| "#{a.name}: #{a.name}" }.join(", ") })
+        return #{meta.name}(#{meta.attributes.map { |a| "#{a.name}: #{a.name}" }.join(", ") })
     }
 }"""
   end
@@ -16,10 +16,10 @@ class Json < Primix::Processor
   private
 
   def json_extraction_lists
-    meta_info.attributes.map do |attr|
+    meta.attributes.map do |attr|
       transformer = "#{attr.name}Transformer"
-      if meta_info.respond_to? transformer
-        "let #{attr.name} = json[\"#{attr.name}\"].flatMap(#{transformer}) as? #{attr.typename}"
+      if meta.respond_to_static_method? transformer
+        "let #{attr.name} = json[\"#{attr.name}\"].flatMap(#{meta.name}.#{transformer})"
       else
         "let #{attr.name} = json[\"#{attr.name}\"] as? #{attr.typename}"
       end

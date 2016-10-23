@@ -52,7 +52,19 @@ module Primix
           @annotations += annotations
         end
 
-        def respond_to?(method)
+        def respond_to_instace_method?(method)
+          @functions.any? { |func| func.name == method.to_s && func.is_instance_method? }
+        end
+
+        def respond_to_static_method?(method)
+          @functions.any? { |func| func.name == method.to_s && func.is_static_method? }
+        end
+
+        def respond_to_class_method?(method)
+          @functions.any? { |func| func.name == method.to_s && func.is_class_method? }
+        end
+
+        def respond_to_method?(method)
           @functions.any? { |func| func.name == method.to_s }
         end
 

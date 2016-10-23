@@ -14,9 +14,9 @@ module Primix
           @name     = element.identifier.lexeme
           @typename = element.real_type.desc
           @modifiers = element.modifiers.map(&:lexeme)
-          @kindname = if is_class_method?
+          @kindname = if is_class_attr?
                         "var.class"
-                      elsif is_static_method?
+                      elsif is_static_attr?
                         "var.static"
                       else
                         "var.instance"
@@ -26,11 +26,11 @@ module Primix
           end
         end
 
-        def is_class_method?
+        def is_class_attr?
           @modifiers.include? "class"
         end
 
-        def is_static_method?
+        def is_static_attr?
           @modifiers.include? "static"
         end
 

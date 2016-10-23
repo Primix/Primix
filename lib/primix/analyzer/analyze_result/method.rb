@@ -35,6 +35,10 @@ module Primix
           end
         end
 
+        def is_instance_method?
+          !is_class_method? && !is_static_method?
+        end
+
         def is_class_method?
           @modifiers.include? "class"
         end

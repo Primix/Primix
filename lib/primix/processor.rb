@@ -1,6 +1,6 @@
 module Primix
   class Processor
-    attr_reader :meta_info
+    attr_reader :meta
     attr_reader :params
 
     class << self
@@ -10,9 +10,9 @@ module Primix
 
     self.category = :generate
 
-    def initialize(meta_info, *params)
-      @meta_info = meta_info
-      @params    = params
+    def initialize(meta, *params)
+      @meta = meta
+      @params = params
     end
   end
 end
