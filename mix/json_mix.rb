@@ -17,9 +17,16 @@ class Json < Primix::Processor
 
   def json_extraction_lists
     meta.attributes.map do |attr|
-      transformer = "#{attr.name}Transformer"
-      if meta.respond_to_static_method? transformer
-        "let #{attr.name} = json[\"#{attr.name}\"].flatMap(#{meta.name}.#{transformer})"
+      transformer = meta.functions.detect do |func|
+        func.name == "#{attr.name}Transformer" && func.is_static_method?
+      end
+      if transformer
+        transformer_from_type = transformer.param_types.first
+        if transformer_from_type == "Any"
+          "let #{attr.name} = json[\"#{attr.name}\"].flatMap(#{meta.name}.#{transformer.name})"
+        else
+          "let #{attr.name} = (json[\"#{attr.name}\"] as? #{transformer_from_type}).flatMap(#{meta.name}.#{transformer.name})"
+        end
       else
         "let #{attr.name} = json[\"#{attr.name}\"] as? #{attr.typename}"
       end
