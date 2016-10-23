@@ -81,6 +81,16 @@ module Primix
           hash
         end
 
+        def call(*params)
+          pairs = [].tap do |key_value_pairs|
+            param_labels.each_with_index do |label, index|
+              key_value_pairs << "#{label}: #{params[index]}"
+            end
+          end
+
+          "#{@name}(#{pairs.join(", ")})"
+        end
+
         class << self
           def from_hash(hash)
             method = Method.new
