@@ -26,6 +26,10 @@ module Primix
           end
         end
 
+        def is_instance_attr?
+          !is_class_attr? && !is_static_attr?
+        end
+
         def is_class_attr?
           @modifiers.include? "class"
         end
