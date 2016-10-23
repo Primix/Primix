@@ -52,6 +52,10 @@ module Primix
           @annotations += annotations
         end
 
+        def respond_to?(method)
+          @functions.any? { |func| func.name == method.to_s }
+        end
+
         def to_hash
           {}.tap do |hash|
             hash[:kindname] = kindname
