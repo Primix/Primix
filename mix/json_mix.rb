@@ -7,7 +7,7 @@ class Json < Primix::Processor
 """extension #{meta.name} {
     static func parse(json: Any) -> #{meta.name}? {
         guard let json = json as? [String: Any] else { return nil }
-        guard #{json_extraction_lists.join(",\n\t\t")} else { return nil }
+        guard #{json_extraction_lists.join(",\n\t\t\t")} else { return nil }
         return #{meta.name}(#{key_paths.map { |a| "#{a.name}: #{a.name}" }.join(", ") })
     }
 }"""
@@ -33,6 +33,7 @@ class Json < Primix::Processor
       end
     end
   end
+
   def extract_from_json(attr)
     json_key_path = json_property_hash[attr.name] || attr.name
     key_paths = json_key_path.split(".")
@@ -46,6 +47,7 @@ class Json < Primix::Processor
     end
     result
   end
+
   def json_property_hash
     meta.attributes.detect { |a| a.name == "JSONKeyPathByPropertyKey" && a.is_static_attr? }.default_value
   end
