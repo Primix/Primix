@@ -3,6 +3,7 @@ require 'claide'
 
 module Primix
   class Command < CLAide::Command
+    require_relative 'command/deintegrate'
     require_relative 'command/init'
     require_relative 'command/install'
 

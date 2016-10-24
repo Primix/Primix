@@ -4,7 +4,7 @@ module Primix
   class Command
     class Init < Command
 
-      self.summary = ""
+      self.summary = "Intitiating Primix for current project."
       self.description = <<-DESC
       DESC
 
